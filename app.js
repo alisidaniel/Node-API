@@ -14,5 +14,9 @@ var Olamide = new Person('Olamide');
 var People = [Daniel, Alisi, Olamide];
 
 People.forEach(function(Person){
-    Person.On
-})
+    Person.On('speak', function(msg){
+        console.log(Person.name + ' said: ' + msg);
+    })
+});
+
+Daniel.emit('speak', 'hey dudes');
