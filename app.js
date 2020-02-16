@@ -1,22 +1,5 @@
-var events = require('events');
-var util = require('util');
+var fs = require('fs');
 
-var Person = function (name){
-    this.name = name;
-}
+var readMe = fs.readFileSync('readme.txt', 'utf8');
 
-util.inherits(Person, events.EventEmitter)
-
-var Daniel = new Person('Daniel');
-var Alisi  = new Person('Goodluck');
-var Olamide = new Person('Olamide');
-
-var People = [Daniel, Alisi, Olamide];
-
-People.forEach(function(Person){
-    Person.On('speak', function(msg){
-        console.log(Person.name + ' said: ' + msg);
-    })
-});
-
-Daniel.emit('speak', 'hey dudes');
+console.log(readMe);
