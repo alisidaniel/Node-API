@@ -10,6 +10,7 @@ var todoSchema = new mongoose.Schema({
 });
 
 var Todo = mongoose.model('Todo', todoSchema);
+
 var itemOne = Todo({item: 'buy flowers'}).save(function(err) {
     if (err) throw err;
     console.log('item saved');
