@@ -1,0 +1,10 @@
+version: '3.9'
+services:
+    api:
+        build:
+            context: ./
+            dockerfile: Dockerfile
+        environment:
+            - DB=mongodb+srv://ievents:Fr7vFnlsQdSFIbCA@cluster0.ga88x.mongodb.net/test
+        ports:
+            - '5000:5000'
