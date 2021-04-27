@@ -15,6 +15,7 @@ app.use(cors(corsOptions));
 
 //* SERVER */
 const httpServer = http.createServer(app);
+
 try {
     httpServer.listen(config.server.port, () => {
         console.info(`Server running on port: ${config.server.port}`);
