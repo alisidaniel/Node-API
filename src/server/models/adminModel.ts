@@ -1,10 +1,7 @@
 import { Document, Model, model, Types, Schema, Query } from 'mongoose';
-enum EUserType {
-    Express = 0,
-    Portal = 1
-}
 
-export interface IUser {
+
+export interface IAdmin {
     firstName: string;
     lastName: string;
     middleName?: string;
@@ -12,26 +9,18 @@ export interface IUser {
     phone: string;
     address: Map<string, string>;
     username: string;
+    roles: string;
     password: string;
     active: boolean;
-    ePin?: number;
     photo?: string;
-    businessType?: string;
-    cacDoc?: string;
-    licenseDoc?: string;
-    documentVerified?: boolean;
-    userType: EUserType;
-    walletBalance?: number;
-    health_description: Map<string, string>;
 }
 
-interface UserDocument extends IUser, Document {
+interface AdminDocument extends IAdmin, Document {
     address: Types.Map<string>;
-    health_description: Types.Map<string>;
     fullName: string;
 }
 
-const userModel = new Schema<UserDocument>(
+const adminModel = new Schema<AdminDocument>(
     {
         firstName: {
             type: String,
@@ -44,14 +33,6 @@ const userModel = new Schema<UserDocument>(
         lastName: {
             type: String,
             required: true
-        },
-        userName: {
-            type: String,
-            unique: true,
-            lowercase: true,
-            min: 3,
-            max: 100,
-            required: false
         },
         email: {
             type: String,
@@ -72,7 +53,7 @@ const userModel = new Schema<UserDocument>(
         address: {
             type: Map,
             of: String,
-            required: true
+            required: false
         },
         gender: {
             type: Number,
@@ -84,43 +65,14 @@ const userModel = new Schema<UserDocument>(
             type: Boolean,
             default: false
         },
-        ePin: {
-            type: Number,
-            required: false
+        roles:{
+            type: String,
+            enum: []
         },
         photo: {
             type: String,
             required: false
         },
-        businessType: {
-            type: String,
-            required: false
-        },
-        cacDoc: {
-            type: String
-        },
-        licenseDoc: {
-            type: String
-        },
-        documentVerified: {
-            type: Boolean,
-            default: false
-        },
-        userType: {
-            type: String,
-            enum: [0, 1],
-            default: 0,
-            required: true
-        },
-        walletBalance: {
-            type: Number,
-            default: 0
-        },
-        health_description: {
-            type: Map,
-            of: String,
-            required: false
-        }
     },
     {
         timestamps: true
@@ -128,22 +80,18 @@ const userModel = new Schema<UserDocument>(
 );
 
 // VIRTUALS *//
-userModel.virtual('fullName').get(function (this: UserDocument) {
+adminModel.virtual('fullName').get(function (this: AdminDocument) {
     return this.firstName + this.middleName + this.lastName;
 });
 
-//* METHODS *//
-userModel.methods.getUserType = function (this: UserDocument) {
-    return this.userType == 0 ? 'Express' : 'Portal';
-};
 
 //* MIDDLEWARE *//
-userModel.pre<UserDocument>('save', function (next) {
+adminModel.pre<AdminDocument>('save', function (next) {
     if (this.isModified('password')) {
         // this.password = hashPassword(this.password)  //import a hasPassword function
     }
 });
 
-const User = model('User', userModel);
+const Admin = model('Admin', adminModel);
 
-export default User;
+export default Admin;
