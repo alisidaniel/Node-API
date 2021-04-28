@@ -1,92 +1,149 @@
-import mongoose from "mongoose";
+import { Document, Model, model, Types, Schema, Query } from 'mongoose';
+enum EUserType {
+    Express = 0,
+    Portal = 1
+}
 
-const Schema = mongoose.Schema;
+export interface IUser {
+    firstName: string;
+    lastName: string;
+    middleName?: string;
+    email: string;
+    phone: string;
+    address: Map<string, string>;
+    username: string;
+    password: string;
+    active: boolean;
+    ePin?: number;
+    photo?: string;
+    businessType?: string;
+    cacDoc?: string;
+    licenseDoc?: string;
+    documentVerified?: boolean;
+    userType: EUserType;
+    walletBalance?: number;
+    health_description: Map<string, string>;
+}
 
-const userModel = new Schema({
-    firstName:{
-        type: String,
-        required: true
+interface UserDocument extends IUser, Document {
+    address: Types.Map<string>;
+    health_description: Types.Map<string>;
+    fullName: string;
+}
+
+const userModel = new Schema<UserDocument>(
+    {
+        firstName: {
+            type: String,
+            required: true
+        },
+        middleName: {
+            type: String,
+            required: false
+        },
+        lastName: {
+            type: String,
+            required: true
+        },
+        userName: {
+            type: String,
+            unique: true,
+            lowercase: true,
+            min: 3,
+            max: 100,
+            required: false
+        },
+        email: {
+            type: String,
+            unique: true,
+            required: true,
+            lowercase: true
+        },
+        phone: {
+            type: String,
+            required: true
+        },
+        password: {
+            type: String,
+            required: true,
+            min: 6,
+            max: 225
+        },
+        address: {
+            type: Map,
+            of: String,
+            required: true
+        },
+        gender: {
+            type: Number,
+            enum: [0, 1],
+            default: 0,
+            required: false
+        },
+        active: {
+            type: Boolean,
+            default: false
+        },
+        ePin: {
+            type: Number,
+            required: false
+        },
+        photo: {
+            type: String,
+            required: false
+        },
+        businessType: {
+            type: String,
+            required: false
+        },
+        cacDoc: {
+            type: String
+        },
+        licenseDoc: {
+            type: String
+        },
+        documentVerified: {
+            type: Boolean,
+            default: false
+        },
+        userType: {
+            type: String,
+            enum: [0, 1],
+            default: 0,
+            required: true
+        },
+        walletBalance: {
+            type: Number,
+            default: 0
+        },
+        health_description: {
+            type: Map,
+            of: String,
+            required: false
+        }
     },
-    middleName:{
-        type: String,
-        required: false
-    },
-    lastName:{
-        type: String,
-        required: true
-    },
-    userName:{
-        type: String,
-        unique: true,
-        min: 3,
-        max: 100,
-        required: false
-    },
-    email:{
-        type: String,
-        unique: true,
-        required: true
-    },
-    phone:{
-        type: String,
-        required: true
-    },
-    password:{
-        type: String,
-        required: true,
-        min: 6,
-        max: 225
-    },
-    address:{
-        type: Map,
-        of: String,
-        required: true,
-    },
-    active:{
-        type: Boolean,
-        default: false
-    },
-    ePin:{
-        type: Number,
-        required: false
-    },
-    photo:{
-        type: String,
-        required: false
-    },
-    businessType:{
-        type: String,
-        required: false
-    },
-    cacDoc:{
-        type: String,
-    },
-    licenseDoc:{
-        type: String
-    },
-    documentVerified:{
-        type: Boolean,
-        default: false
-    },
-    userType:{
-        type: String,
-        enum: ["EXPRESS", "PORTAL"],
-        default: "EXPRESS",
-        required: true
-    },
-    walletBalance:{
-        type: Number,
-        default: 0
-    },
-    health_description:{
-        type: Map,
-        of: String,
-        required: false
+    {
+        timestamps: true
     }
-}, {
-    timestamps: true
-})
+);
 
-const User = mongoose.model("User", userModel);
+// VIRTUALS *//
+userModel.virtual('fullName').get(function (this: UserDocument) {
+    return this.firstName + this.lastName;
+});
+
+//* METHODS *//
+userModel.methods.getUserType = function (this: UserDocument) {
+    return this.userType > 0 ? 'Express' : 'Portal';
+};
+
+//* MIDDLEWARE *//
+userModel.pre<UserDocument>('save', function (next) {
+    if (this.isModified('password')) {
+        // this.password = hashPassword(this.password)  //import a hasPassword function
+    }
+});
+
+const User = model('User', userModel);
 
 export default User;
