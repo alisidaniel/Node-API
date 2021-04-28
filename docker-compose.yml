@@ -5,6 +5,6 @@ services:
             context: ./
             dockerfile: Dockerfile
         environment:
-            - DB=mongodb+srv://ievents:Fr7vFnlsQdSFIbCA@cluster0.ga88x.mongodb.net/test
+            - DB=mongodb+srv://user:1234567890@cluster0.ecduv.mongodb.net/test
         ports:
             - '5000:5000'

@@ -3,7 +3,7 @@ import dotenv from 'dotenv';
 dotenv.config();
 
 // ENV KEY VARIABLES
-const SERVER_PORT: string | number = process.env.SERVER_PORT || 5000;
+const SERVER_PORT: Number = parseInt(<string>process.env.SERVER_PORT, 10) || 5000;
 const SERVER_HOST_NAME: string = process.env.SERVER_HOST_NAME || 'localhost';
 const MONGO_URL: string = process.env.MONGO_URL!;
 const JWT_SECRET: string = process.env.JWT_SECRET || 'somerandomtextinmidlman';
