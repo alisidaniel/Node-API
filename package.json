@@ -10,6 +10,7 @@
   },
   "_moduleAliases": {
     "@config": "src/config",
+    "@database": "src/database",
     "@middlewares": "src/server/middlewares",
     "@utils": "src/utils",
     "@routes": "src/server/routes",

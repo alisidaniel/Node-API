@@ -8,6 +8,7 @@
         "baseUrl": "./src",
         "paths": {
             "@test/*": ["test/*"],
+            "@database/*": ["database/*"],
             "@config/*": ["config/*"],
             "@utils/*": ["utils/*"],
             "@controllers/*": ["server/controllers/*"],
