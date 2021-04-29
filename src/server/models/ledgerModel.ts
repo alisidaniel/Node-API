@@ -1,13 +1,10 @@
-import mongoose from 'mongoose';
+import { model, Schema } from 'mongoose';
 
-const Schema = mongoose.Schema;
-
-
-const transactionEnums = ["001", "002"];
+const transactionEnums = ['001', '002'];
 
 const ledgerModel = new Schema(
     {
-        reference:{
+        reference: {
             type: String,
             required: true
         },
@@ -15,29 +12,30 @@ const ledgerModel = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        oldBalance:{
+        oldBalance: {
             type: Number,
             required: true
         },
-        newBalance:{
+        newBalance: {
             type: Number,
             required: true
         },
-        transactionType:{  //  0 specify debit, 1 - specifies credit
+        transactionType: {
+            //  0 specify debit, 1 - specifies credit
             type: Number,
-            enum: [0, 1], 
+            enum: [0, 1]
         },
-        description:{
+        description: {
             type: String,
             required: true
         },
         entity: {
-            type: String, //this should house the model name
+            type: String //this should house the model name
         },
         entityId: {
-            type: Schema.Types.ObjectId,
+            type: Schema.Types.ObjectId
         },
-        transactionCode:{
+        transactionCode: {
             type: String,
             required: true,
             enum: transactionEnums
@@ -48,6 +46,6 @@ const ledgerModel = new Schema(
     }
 );
 
-const Ledger = mongoose.model('Ledger', ledgerModel);
+const Ledger = model('Ledger', ledgerModel);
 
 export default Ledger;

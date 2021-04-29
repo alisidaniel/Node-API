@@ -1,5 +1,4 @@
-import { Document, Model, model, Types, Schema, Query } from 'mongoose';
-
+import { Document, model, Types, Schema } from 'mongoose';
 
 export interface IAdmin {
     firstName: string;
@@ -65,14 +64,14 @@ const adminModel = new Schema<AdminDocument>(
             type: Boolean,
             default: false
         },
-        roles:{
+        roles: {
             type: String,
             enum: []
         },
         photo: {
             type: String,
             required: false
-        },
+        }
     },
     {
         timestamps: true
@@ -83,7 +82,6 @@ const adminModel = new Schema<AdminDocument>(
 adminModel.virtual('fullName').get(function (this: AdminDocument) {
     return this.firstName + this.middleName + this.lastName;
 });
-
 
 //* MIDDLEWARE *//
 adminModel.pre<AdminDocument>('save', function (next) {

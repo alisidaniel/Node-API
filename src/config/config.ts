@@ -31,7 +31,8 @@ const URL = {
 const config = {
     server: SERVER,
     mongo: MONGO,
-    url: URL
+    url: URL,
+    auth: SECRET
     // others ...
 };
 

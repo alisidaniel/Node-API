@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const disputeModel = new Schema(
     {
@@ -12,17 +10,17 @@ const disputeModel = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        subject:{
+        subject: {
             type: String,
             required: true
         },
-        message:{
+        message: {
             type: String,
             required: true
         },
-        status:{
+        status: {
             type: String,
-            enum: [0,1,2]   // 0 - pending, 1 - opend, 2 - closed 
+            enum: [0, 1, 2] // 0 - pending, 1 - opend, 2 - closed
         }
     },
     {
@@ -30,6 +28,6 @@ const disputeModel = new Schema(
     }
 );
 
-const Dispute = mongoose.model('Dispute', disputeModel);
+const Dispute = model('Dispute', disputeModel);
 
 export default Dispute;

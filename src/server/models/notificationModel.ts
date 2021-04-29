@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const notificationModel = new Schema(
     {
@@ -8,20 +6,20 @@ const notificationModel = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        message:{
+        message: {
             type: String,
             required: true
         },
-        status:{
+        status: {
             type: String,
             enum: [0, 1] // 0 - open, 1 - closed
-        },
+        }
     },
     {
         timestamps: true
     }
 );
 
-const Notification = mongoose.model('Notification', notificationModel);
+const Notification = model('Notification', notificationModel);
 
 export default Notification;

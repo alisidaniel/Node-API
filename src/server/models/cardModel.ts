@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const cardModel = new Schema(
     {
@@ -22,6 +20,6 @@ const cardModel = new Schema(
     }
 );
 
-const Card = mongoose.model('Card', cardModel);
+const Card = model('Card', cardModel);
 
 export default Card;
