@@ -13,6 +13,7 @@ import errorLogger from '@utils/errorExecptionLogger';
 
 // ROUTERS
 import authRouter from './server/routes/authRoute';
+import errorHandler from '@middlewares/errorHandler';
 
 const app: Application = express();
 
@@ -20,6 +21,7 @@ const app: Application = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors(corsOptions));
+app.use(errorHandler);
 
 app.use('/', authRouter);
 
