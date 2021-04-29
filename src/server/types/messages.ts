@@ -4,4 +4,6 @@ const AUTHENTICATION = 'You must login to perform this operation';
 
 const NO_USER = 'No such user found';
 
-export { AUTHORIZATION, AUTHENTICATION, NO_USER };
+const INVALID_ROUTE = 'Invalid api route';
+
+export { AUTHORIZATION, AUTHENTICATION, NO_USER, INVALID_ROUTE };
