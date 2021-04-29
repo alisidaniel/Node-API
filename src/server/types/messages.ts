@@ -2,6 +2,8 @@ const AUTHORIZATION = 'No Authorization header';
 
 const AUTHENTICATION = 'You must login to perform this operation';
 
-const NO_USER = 'No such user found';
+const NO_USER = 'User not found.';
 
-export { AUTHORIZATION, AUTHENTICATION, NO_USER };
+const SERVER_ERROR = 'Something went wrong.';
+
+export { AUTHORIZATION, AUTHENTICATION, NO_USER, SERVER_ERROR };
