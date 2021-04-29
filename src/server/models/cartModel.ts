@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const cartModel = new Schema(
     {
@@ -35,6 +33,6 @@ const cartModel = new Schema(
     }
 );
 
-const Cart = mongoose.model('Cart', cartModel);
+const Cart = model('Cart', cartModel);
 
 export default Cart;

@@ -1,10 +1,8 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const productModel = new Schema(
     {
-        reference:{
+        reference: {
             type: String,
             required: true
         },
@@ -23,8 +21,8 @@ const productModel = new Schema(
         image: [
             {
                 type: String,
-                default: [],
-            },
+                default: []
+            }
         ],
         category: {
             type: String,
@@ -34,62 +32,62 @@ const productModel = new Schema(
             type: String,
             required: true
         },
-        unitPrice:{
+        unitPrice: {
             type: Number,
             required: true
         },
-        packagePrice:{
+        packagePrice: {
             type: Number,
             required: false
         },
-        variation:[
+        variation: [
             {
                 name: String,
                 price: Number,
                 color: String,
-                default: [],
-              },
+                default: []
+            }
         ],
-        stock:{
+        stock: {
             type: Number,
             default: 1
         },
-        formulation:{
+        formulation: {
             type: String,
             required: false
         },
         reviews: [
             {
-                user:{
+                user: {
                     type: Schema.Types.ObjectId,
                     ref: 'User'
                 },
-                rate:{
-                    type: Number,
+                rate: {
+                    type: Number
                 },
-                comment:{
+                comment: {
                     type: String
                 }
             }
         ],
-        promo:[
+        promo: [
             {
                 discount: Number,
                 startDate: Date,
                 endDate: Date
             }
         ],
-        isVerified:{  // When none verified item will not be shown to public users
+        isVerified: {
+            // When none verified item will not be shown to public users
             type: Boolean,
             default: false
         }
-
     },
     {
         timestamps: true
     }
 );
 
-const Product = mongoose.model('Product', productModel);
+const Product = model('Product', productModel);
 
 export default Product;

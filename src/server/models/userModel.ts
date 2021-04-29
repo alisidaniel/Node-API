@@ -1,4 +1,4 @@
-import { Document, Model, model, Types, Schema, Query } from 'mongoose';
+import { Document, model, Types, Schema } from 'mongoose';
 enum EUserType {
     Express = 0,
     Portal = 1

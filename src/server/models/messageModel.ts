@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const messageModel = new Schema(
     {
@@ -8,15 +6,15 @@ const messageModel = new Schema(
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        receiver:{
+        receiver: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        message:{
+        message: {
             type: String,
             required: true
         },
-        status:{
+        status: {
             type: Number,
             enum: [0, 1] // 0 - open, 1 - closed
         }
@@ -26,6 +24,6 @@ const messageModel = new Schema(
     }
 );
 
-const Message = mongoose.model('Message', messageModel);
+const Message = model('Message', messageModel);
 
 export default Message;

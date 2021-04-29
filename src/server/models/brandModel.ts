@@ -1,17 +1,15 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const brandModel = new Schema(
     {
-        name:{
+        name: {
             type: String,
             required: true
         },
-        logo:{
+        logo: {
             type: String
         },
-        status:{
+        status: {
             type: Boolean,
             default: false
         }
@@ -21,6 +19,6 @@ const brandModel = new Schema(
     }
 );
 
-const Brand = mongoose.model('Brand', brandModel);
+const Brand = model('Brand', brandModel);
 
 export default Brand;
