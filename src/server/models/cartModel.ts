@@ -4,19 +4,31 @@ const Schema = mongoose.Schema;
 
 const cartModel = new Schema(
     {
-        total: {
-            type: Number,
-            require: false
-        },
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        product: {
-            type: Schema.Types.ObjectId,
-            ref: 'Product'
-        },
-        Products: [{ type: String, required: true }]
+        Products: [
+            {
+                product: {
+                    type: Schema.Types.ObjectId,
+                    ref: 'Product',
+                    default: null
+                },
+                quantity: {
+                    type: Number,
+                    default: 1
+                },
+                variation: {
+                    type: Schema.Types.ObjectId,
+                    default: null
+                }
+            }
+        ],
+        total: {
+            type: Number,
+            require: false
+        }
     },
     {
         timestamps: true
