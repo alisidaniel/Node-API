@@ -1,4 +1,4 @@
-import User from '@models/userModel';
+import User from '../server/models/userModel';
 
 export const userExist = async (email: string): Promise<Boolean> => {
     let user = await User.findOne({ email });

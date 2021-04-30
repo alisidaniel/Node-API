@@ -3,17 +3,15 @@ import 'module-alias/register';
 import http from 'http';
 import express, { Application } from 'express';
 import cors from 'cors';
-import config from '@config/config';
-import database from '@database/connection';
-import corsOptions from '@utils/corsPermissions';
+import config from './config/config';
+import database from './database/connection';
 
 import morgan from 'morgan';
-import errorRequest from '@utils/errorRequest';
-import errorLogger from '@utils/errorExecptionLogger';
+import { errorRequest, errorLogger, corsOptions } from './utils';
 
 // ROUTERS
 import authRouter from './server/routes/authRoute';
-import errorHandler from '@middlewares/errorHandler';
+import errorHandler from './server/middlewares/errorHandler';
 
 const app: Application = express();
 

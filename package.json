@@ -9,15 +9,6 @@
         "build": "rm -rf dist/ && prettier --write src/ && tsc",
         "prettier": "prettier --write src/"
     },
-    "_moduleAliases": {
-        "@config": "src/config",
-        "@database": "src/database",
-        "@middlewares": "src/server/middlewares",
-        "@types": "src/server/types",
-        "@utils": "src/utils",
-        "@routes": "src/server/routes",
-        "@controllers": "src/server/controllers"
-    },
     "repository": "https://github.com/midlmanlimited/Api",
     "author": "alisidaniel <alisidaniel@gmail.com>",
     "license": "MIT",
@@ -31,6 +22,7 @@
         "@types/node": "^15.0.0",
         "@types/nodemailer": "^6.4.1",
         "jest": "^26.6.3",
+        "ts-jest": "^26.5.3",
         "nodemon": "^2.0.7",
         "prettier": "^2.2.1",
         "ts-node": "^9.1.1",
@@ -49,4 +41,5 @@
         "nodemailer": "^6.6.0",
         "winston": "^3.3.3"
     }
+   
 }

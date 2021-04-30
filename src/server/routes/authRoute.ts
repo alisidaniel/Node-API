@@ -1,6 +1,5 @@
-import { router } from '@utils/router';
-import AuthController from '@controllers/authController';
-import { checkJwt } from '@middlewares/checkJWT';
+import { router } from '../../utils/router';
+import AuthController from '../controllers/authController';
 
 router.post('/login', AuthController.login);
 

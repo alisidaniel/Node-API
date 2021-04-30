@@ -1,4 +1,4 @@
-import express, { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
+import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 import winston from 'winston';
 
 const requestError = function (

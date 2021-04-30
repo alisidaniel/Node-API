@@ -2,8 +2,8 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User from '@models/userModel';
 import config from '@config/config';
-import { UNAUTHORIZED } from '@types/statusCode';
-import { ACCOUNT_INACTIVE } from '@types/messages';
+import { UNAUTHORIZED } from '../types/statusCode';
+import { ACCOUNT_INACTIVE } from '../types/messages';
 
 export const isAccountVerified = async (req: Request, res: Response, next: NextFunction) => {
     try {

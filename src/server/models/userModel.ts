@@ -1,5 +1,5 @@
 import { Document, model, Types, Schema } from 'mongoose';
-import { hashPassword } from '@utils/hashPassword';
+import { hashPassword } from '../../utils';
 enum EUserType {
     Express = 0,
     Portal = 1
