@@ -1,6 +1,4 @@
-import mongoose from 'mongoose';
-
-const Schema = mongoose.Schema;
+import { model, Schema } from 'mongoose';
 
 const refundModel = new Schema(
     {
@@ -38,6 +36,6 @@ const refundModel = new Schema(
     }
 );
 
-const Refund = mongoose.model('Refund', refundModel);
+const Refund = model('Refund', refundModel);
 
 export default Refund;

@@ -1,4 +1,5 @@
 import { Document, model, Types, Schema } from 'mongoose';
+import { hashPassword } from '@utils/hashPassword';
 enum EUserType {
     Express = 0,
     Portal = 1
@@ -138,9 +139,9 @@ userModel.methods.getUserType = function (this: UserDocument) {
 };
 
 //* MIDDLEWARE *//
-userModel.pre<UserDocument>('save', function (next) {
+userModel.pre<UserDocument>('save', async function (next) {
     if (this.isModified('password')) {
-        // this.password = hashPassword(this.password)  //import a hasPassword function
+        this.password = await hashPassword(this.password); //import a hasPassword function
     }
 });
 

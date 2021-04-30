@@ -4,7 +4,7 @@ import config from '@config/config';
 
 export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = <string>req.headers['Authorization'];
+        const token = <string>req.headers?.authorization?.split(' ')[1];
         let jwtPayload = <any>jwt.verify(token, config.auth.jwt);
         res.locals.jwtPayload = jwtPayload;
         const { userId, username } = jwtPayload;
