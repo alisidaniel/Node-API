@@ -1,4 +1,4 @@
-import winston, { Logger, transports } from 'winston';
+import winston from 'winston';
 import path from 'path';
 import config from '../config/config';
 
@@ -7,7 +7,7 @@ let options = {
         level: 'info',
         filename: `${path.join(__dirname, '../storage/logs/error.log')}`,
         handleExceptions: true,
-        json: true,
+        json: false,
         maxsize: 5242880, // 5MB
         maxFiles: 5,
         colorize: false
