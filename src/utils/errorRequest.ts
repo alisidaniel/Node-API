@@ -1,22 +1,13 @@
 import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 import winston from 'winston';
 
-interface Error {
-    status?: number;
-    message?: string;
-}
-
-const requestError = function (
-    err: ErrorRequestHandler,
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
+const requestError = function (err: any, req: Request, res: Response, next: NextFunction) {
     winston.error(
-        `${err.status || 500} - ${err.message} - ${req.originalUrl} - ${req.method} - ${req.ip}`
+        `${err.statusCode || 500} - ${err.statusMessage} - ${req.originalUrl} - ${req.method} - ${
+            req.ip
+        }`
     );
 
-    console.log('Hello this is the sattsu', err.status);
     //error
     //warn
     //verbose
