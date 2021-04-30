@@ -7,7 +7,8 @@ import config from './config/config';
 import database from './database/connection';
 
 import morgan from 'morgan';
-import { errorRequest, errorLogger, corsOptions } from './utils';
+import * as winston from 'winston';
+import { errorRequest, logger, corsOptions } from './utils';
 
 // ROUTERS
 import authRouter from './server/routes/authRoute';
@@ -24,7 +25,7 @@ app.use(errorHandler);
 app.use('/', authRouter);
 
 // ERROR LOG HANDLER
-app.use(morgan('combined', { stream: errorLogger }));
+app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
 app.use(errorRequest);
 
 //* SERVER */

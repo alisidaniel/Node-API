@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User from '@models/userModel';
-import config from '@config/config';
+import User from '../models/userModel';
+import config from '../../config/config';
 import { UNAUTHORIZED } from '../types/statusCode';
 import { ACCOUNT_INACTIVE } from '../types/messages';
 

@@ -8,6 +8,7 @@ const SERVER_HOST_NAME: string = process.env.SERVER_HOST_NAME || 'localhost';
 const MONGO_URL: string = process.env.MONGO_URL!;
 const JWT_SECRET: string = process.env.JWT_SECRET || 'somerandomtextinmidlman';
 const FRONTEND_URL: string = process.env.FRONTEND_URL || 'http://localhost:3000';
+const NODE_ENV: string = process.env.NODE_ENV || 'development';
 
 const SERVER = {
     hostname: SERVER_HOST_NAME,
@@ -32,7 +33,8 @@ const config = {
     server: SERVER,
     mongo: MONGO,
     url: URL,
-    auth: SECRET
+    auth: SECRET,
+    node_env: NODE_ENV
     // others ...
 };
 

@@ -1,5 +1,5 @@
 import errorRequest from './errorRequest';
-import errorLogger from './errorExecptionLogger';
+import logger from './errorExecptionLogger';
 import corsOptions from './corsPermissions';
 import { hashPassword, validatePassword } from './hashPassword';
 import { userExist } from './userExist';
@@ -7,7 +7,7 @@ import { userExist } from './userExist';
 export {
     //
     errorRequest,
-    errorLogger,
+    logger,
     corsOptions,
     hashPassword,
     validatePassword,
