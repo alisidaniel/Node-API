@@ -1,47 +1,52 @@
 {
-  "name": "Api",
-  "version": "1.0.0",
-  "main": "server.ts",
-  "scripts": {
-    "start": "node dist/server.js",
-    "dev": "nodemon src/server.ts",
-    "test": "jest",
-    "build": "rm -rf dist/ && prettier --write src/ && tsc"
-  },
-  "_moduleAliases": {
-    "@config": "src/config",
-    "@database": "src/database",
-    "@middlewares": "src/server/middlewares",
-    "@types":"src/server/types",
-    "@utils": "src/utils",
-    "@routes": "src/server/routes",
-    "@controllers": "src/server/controllers"
-  },
-  "repository": "https://github.com/midlmanlimited/Api",
-  "author": "alisidaniel <alisidaniel@gmail.com>",
-  "license": "MIT",
-  "devDependencies": {
-    "@types/cors": "^2.8.10",
-    "@types/dotenv": "^8.2.0",
-    "@types/express": "^4.17.11",
-    "@types/jest": "^26.0.23",
-    "@types/jsonwebtoken": "^8.5.1",
-    "@types/morgan": "^1.9.2",
-    "@types/node": "^15.0.0",
-    "jest": "^26.6.3",
-    "nodemon": "^2.0.7",
-    "prettier": "^2.2.1",
-    "ts-node": "^9.1.1",
-    "typescript": "^4.2.4"
-  },
-  "dependencies": {
-    "cors": "^2.8.5",
-    "dotenv": "^8.2.0",
-    "express": "^4.17.1",
-    "jsonwebtoken": "^8.5.1",
-    "module-alias": "^2.2.2",
-    "mongoose": "^5.12.5",
-    "morgan": "^1.10.0",
-    "winston": "^3.3.3"
-  }
+    "name": "Api",
+    "version": "1.0.0",
+    "main": "server.ts",
+    "scripts": {
+        "start": "node dist/server.js",
+        "dev": "nodemon src/server.ts",
+        "test": "jest",
+        "build": "rm -rf dist/ && prettier --write src/ && tsc",
+        "prettier": "prettier --write src/"
+    },
+    "_moduleAliases": {
+        "@config": "src/config",
+        "@database": "src/database",
+        "@middlewares": "src/server/middlewares",
+        "@types": "src/server/types",
+        "@utils": "src/utils",
+        "@routes": "src/server/routes",
+        "@controllers": "src/server/controllers"
+    },
+    "repository": "https://github.com/midlmanlimited/Api",
+    "author": "alisidaniel <alisidaniel@gmail.com>",
+    "license": "MIT",
+    "devDependencies": {
+        "@types/cors": "^2.8.10",
+        "@types/dotenv": "^8.2.0",
+        "@types/express": "^4.17.11",
+        "@types/jest": "^26.0.23",
+        "@types/jsonwebtoken": "^8.5.1",
+        "@types/morgan": "^1.9.2",
+        "@types/node": "^15.0.0",
+        "@types/nodemailer": "^6.4.1",
+        "jest": "^26.6.3",
+        "nodemon": "^2.0.7",
+        "prettier": "^2.2.1",
+        "ts-node": "^9.1.1",
+        "typescript": "^4.2.4"
+    },
+    "dependencies": {
+        "@types/bcrypt": "^3.0.1",
+        "bcrypt": "^5.0.1",
+        "cors": "^2.8.5",
+        "dotenv": "^8.2.0",
+        "express": "^4.17.1",
+        "jsonwebtoken": "^8.5.1",
+        "module-alias": "^2.2.2",
+        "mongoose": "^5.12.5",
+        "morgan": "^1.10.0",
+        "nodemailer": "^6.6.0",
+        "winston": "^3.3.3"
+    }
 }

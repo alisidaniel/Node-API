@@ -1,8 +1,13 @@
-import express from "express";
-import AuthController from "../controllers/authController";
+import { router } from '@utils/router';
+import AuthController from '@controllers/authController';
+import { checkJwt } from '@middlewares/checkJWT';
 
-const router = express.Router();
+router.post('/login', AuthController.login);
 
-router.get('/', AuthController.test);
+router.post('/register', AuthController.register);
+
+router.post('/reset/password/token', AuthController.sendPasswordResetToken);
+
+// router.post('/reset/password', AuthController.resetPassword);
 
 export default router;

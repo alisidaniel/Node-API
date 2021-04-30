@@ -2,6 +2,22 @@ const AUTHORIZATION = 'No Authorization header';
 
 const AUTHENTICATION = 'You must login to perform this operation';
 
-const NO_USER = 'No such user found';
+const NO_USER = 'User not found.';
 
-export { AUTHORIZATION, AUTHENTICATION, NO_USER };
+const SERVER_ERROR = 'Something went wrong.';
+
+const INVALID_ROUTE = 'Invalid api route';
+
+const ACCOUNT_INACTIVE = 'User account must be verified.';
+
+const IN_VALID_LOGIN = 'Invalid email or password.';
+
+export {
+    AUTHORIZATION,
+    AUTHENTICATION,
+    NO_USER,
+    INVALID_ROUTE,
+    SERVER_ERROR,
+    IN_VALID_LOGIN,
+    ACCOUNT_INACTIVE
+};
