@@ -55,6 +55,16 @@ export default class AuthController<IAuth> {
 
     static async sendPasswordResetToken(req: Request, res: Response, next: NextFunction) {
         try {
+            const { email }: IUser = req.body;
+            let accountCheck = await userExist(email);
+            if (!accountCheck) return res.status(NOT_FOUND).json({ message: NO_USER });
+            let user = await User.findOne({ email });
+            const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 });
+            // send link with token to user email to change password
+            // add email dispatch here
+            return res
+                .status(SUCCESS)
+                .json({ message: 'Password reset link have been sent to your email' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e });
         }
@@ -62,6 +72,17 @@ export default class AuthController<IAuth> {
 
     static async resetPassword(req: Request, res: Response, next: NextFunction) {
         try {
+            const { email, password }: IUser = req.body;
+
+            await User.updateOne(
+                { email },
+                {
+                    $set: {
+                        password: password
+                    }
+                }
+            );
+            return res.status(SUCCESS).json({ message: 'Successfully reset password.' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e });
         }

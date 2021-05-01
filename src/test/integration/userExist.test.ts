@@ -1,4 +1,4 @@
-import { userExist } from '../utils/userExist';
+import { userExist } from '../../utils/userExist';
 
 describe('User Exist', () => {
     it('should test a boolean is returned and user exist', async () => {

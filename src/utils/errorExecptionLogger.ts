@@ -2,30 +2,31 @@ import winston from 'winston';
 import path from 'path';
 import config from '../config/config';
 
-let options = {
-    file: {
-        level: 'info',
-        filename: `${path.join(__dirname, '../storage/logs/error.log')}`,
-        handleExceptions: true,
-        json: false,
-        maxsize: 5242880, // 5MB
-        maxFiles: 5,
-        colorize: false
-    },
-    console: {
-        level: 'debug',
-        handleExceptions: true,
-        json: false,
-        colorize: true
-    }
-};
-
 let logger = winston.createLogger({
+    level: 'info',
+    format: winston.format.json(),
+    defaultMeta: { service: 'error-service' },
     transports: [
-        new winston.transports.Console(options.console),
-        new winston.transports.File(options.file)
-    ],
-    exitOnError: false // do not exit on handled exceptions
+        //
+        // - Write all logs with level `error` and below to `error.log`
+        // - Write all logs with level `info` and below to `combined.log`
+        //
+        new winston.transports.File({
+            filename: `${path.join(__dirname, '../storage/logs/error.log')}`,
+            level: 'error'
+        }),
+        new winston.transports.File({
+            filename: `${path.join(__dirname, '../storage/logs/combined.log')}`
+        })
+    ]
 });
+
+if (config.node_env !== 'production') {
+    logger.add(
+        new winston.transports.Console({
+            format: winston.format.simple()
+        })
+    );
+}
 
 export default logger;

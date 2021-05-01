@@ -7,7 +7,6 @@ import config from './config/config';
 import database from './database/connection';
 
 import morgan from 'morgan';
-import * as winston from 'winston';
 import { errorRequest, logger, corsOptions } from './utils';
 
 // ROUTERS
@@ -22,7 +21,8 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(errorHandler);
 
-app.use('/', authRouter);
+app.use('/api/v1/auth', authRouter);
+// app.use('/api/v1/product', pro)
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));

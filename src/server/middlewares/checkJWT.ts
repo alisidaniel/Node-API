@@ -16,7 +16,7 @@ export const checkJwt = (req: Request, res: Response, next: NextFunction) => {
         next();
     } catch (error) {
         next({
-            message: 'Unthorized',
+            message: 'UnAuthorized',
             status: 401
         });
     }
