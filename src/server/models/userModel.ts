@@ -11,10 +11,9 @@ export interface IUser {
     middleName?: string;
     email: string;
     phone: string;
-    address: Map<string, string>;
+    address?: Map<string, string>;
     username: string;
     password: string;
-    active: boolean;
     ePin?: number;
     photo?: string;
     businessType?: string;
@@ -23,7 +22,7 @@ export interface IUser {
     documentVerified?: boolean;
     userType: EUserType;
     walletBalance?: number;
-    health_description: Map<string, string>;
+    health_description?: Map<string, string>;
 }
 
 interface UserDocument extends IUser, Document {
@@ -73,7 +72,7 @@ const userModel = new Schema<UserDocument>(
         address: {
             type: Map,
             of: String,
-            required: true
+            required: false
         },
         gender: {
             type: Number,
