@@ -3,16 +3,14 @@ import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
 import config from '../../config/config';
 import { UNAUTHORIZED } from '../types/statusCode';
-import { ACCOUNT_INACTIVE } from '../types/messages';
+import { ACCOUNT_INACTIVE, UNAUTHORIZED as MESSAGE_UNAUTHORIZED } from '../types/messages';
+import { getUserFromDatabase, getUserFromToken } from 'utils/findUser';
 
 export const isAccountVerified = async (req: Request, res: Response, next: NextFunction) => {
     try {
-        const token = <string>req.headers?.authorization?.split(' ')[1];
-        let jwtPayload = <any>jwt.verify(token, config.auth.jwt);
-        res.locals.jwtPayload = jwtPayload;
-        const { userId } = jwtPayload;
-        let user = await User.findOne({ _id: userId });
-        if (!user.active) {
+        const user = await getUserFromToken(req);
+        let response = await User.findOne({ _id: user._id });
+        if (!response.active) {
             return res.status(UNAUTHORIZED).json({ message: ACCOUNT_INACTIVE });
         }
         next();
@@ -24,4 +22,32 @@ export const isAccountVerified = async (req: Request, res: Response, next: NextF
     }
 };
 
-// export const
+export const isPortal = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await getUserFromToken(req);
+        const response = await getUserFromDatabase(user.email);
+        if (response.userType !== 1)
+            return res.status(UNAUTHORIZED).json({ message: MESSAGE_UNAUTHORIZED });
+        next();
+    } catch (e) {
+        next({
+            status: 401,
+            message: e
+        });
+    }
+};
+
+export const isExpress = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await getUserFromToken(req);
+        const response = await getUserFromDatabase(user.email);
+        if (response.userType !== 0)
+            return res.status(UNAUTHORIZED).json({ message: MESSAGE_UNAUTHORIZED });
+        next();
+    } catch (e) {
+        next({
+            status: 401,
+            message: e
+        });
+    }
+};

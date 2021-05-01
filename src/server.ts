@@ -19,9 +19,11 @@ const app: Application = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors(corsOptions));
-app.use(errorHandler);
+// app.use(errorHandler);
 
-app.use('/api/v1/auth', authRouter);
+const baseRoute = '/api/v1';
+
+app.use(`${baseRoute}/auth`, authRouter);
 // app.use('/api/v1/product', pro)
 
 // ERROR LOG HANDLER
