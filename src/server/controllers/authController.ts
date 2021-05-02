@@ -12,21 +12,23 @@ interface IAuth<T> {
     sendPasswordResetToken: () => T;
     resetPassword: () => T;
 }
+
+interface ILogin {
+    email: string;
+    password: string;
+}
 export default class AuthController<IAuth> {
     static async register(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, ...rest }: IUser = req.body;
-            if (!req.body) return res.status(BAD_REQUEST).json({ message: 'Empty field(s).' });
-            console.log(email);
-            if (!userExist(email)) {
-                return res.status(NOT_FOUND).json({ message: NO_USER });
+            const { password, email, ...rest }: IUser = req.body;
+            if (userExist(email)) {
+                return res.status(BAD_REQUEST).json({ message: 'User already exist' });
             }
-            const user = new User(rest);
+            const user = new User({ email, password, ...rest });
+
             await user.save();
-            // const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 });   // the user need to confirm their email... so we don't need to send them a token yet
 
             return res.status(SUCCESS).json({
-                // token,
                 message: 'Successfully registered, please proceed to confirm your mail'
             });
         } catch (e) {
@@ -35,23 +37,24 @@ export default class AuthController<IAuth> {
     }
     static async login(req: Request, res: Response, next: NextFunction) {
         try {
-            const { email, password }: Partial<IUser> = req.body;
-            if (email && password) {
-                let accountCheck = await userExist(email);
-                if (!accountCheck) return res.status(NOT_FOUND).json({ message: NO_USER });
-                let user = await User.findOne({ email });
-                let isPasswordValid = await validatePassword(password, user.password);
-                if (!isPasswordValid)
-                    return res.status(BAD_REQUEST).json({ message: IN_VALID_LOGIN });
-                const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 });
-                return res.status(SUCCESS).json({ token, user });
-            } else {
+            const { email, password }: ILogin = req.body;
+
+            if (!email || !password) {
                 return res
                     .status(BAD_REQUEST)
                     .json({ message: 'Please provide and email and password' });
             }
+
+            const accountCheck = await userExist(email);
+            if (!accountCheck) return res.status(NOT_FOUND).json({ message: NO_USER });
+            const user = await User.findOne({ email });
+            let isPasswordValid = await validatePassword(password, user.password);
+            if (!isPasswordValid) return res.status(BAD_REQUEST).json({ message: IN_VALID_LOGIN });
+            const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 }); // expires in 7hours
+            const newUser = delete user.password;
+            return res.status(SUCCESS).json({ token, newUser });
         } catch (e) {
-            return res.status(SERVER_ERROR).json({ message: e });
+            return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
 
@@ -62,8 +65,6 @@ export default class AuthController<IAuth> {
             if (!accountCheck) return res.status(NOT_FOUND).json({ message: NO_USER });
             let user = await User.findOne({ email });
             const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 });
-            // send link with token to user email to change password
-            // add email dispatch here
             return res
                 .status(SUCCESS)
                 .json({ message: 'Password reset link have been sent to your email' });
