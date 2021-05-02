@@ -45,7 +45,7 @@ const userModel = new Schema<UserDocument>(
             type: String,
             required: true
         },
-        userName: {
+        username: {
             type: String,
             unique: true,
             lowercase: true,
