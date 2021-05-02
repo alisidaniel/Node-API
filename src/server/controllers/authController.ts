@@ -15,12 +15,14 @@ interface IAuth<T> {
 export default class AuthController<IAuth> {
     static async register(req: Request, res: Response, next: NextFunction) {
         try {
-            const { password, email, ...rest }: IUser = req.body;
-            const user = new User({ rest });
+            const { email, ...rest }: IUser = req.body;
+            if (!req.body) return res.status(BAD_REQUEST).json({ message: 'Empty field(s).' });
+            console.log(email);
             if (!userExist(email)) {
                 return res.status(NOT_FOUND).json({ message: NO_USER });
             }
-            user.save();
+            const user = new User(rest);
+            await user.save();
             // const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 });   // the user need to confirm their email... so we don't need to send them a token yet
 
             return res.status(SUCCESS).json({
@@ -28,7 +30,7 @@ export default class AuthController<IAuth> {
                 message: 'Successfully registered, please proceed to confirm your mail'
             });
         } catch (e) {
-            return res.status(SERVER_ERROR).json({ message: e });
+            return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
     static async login(req: Request, res: Response, next: NextFunction) {

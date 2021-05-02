@@ -19,7 +19,7 @@ const app: Application = express();
 app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors(corsOptions));
-// app.use(errorHandler);
+app.use(errorHandler);
 
 const baseRoute = '/api/v1';
 
