@@ -2,11 +2,24 @@ import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
 import User, { IUser } from './../models/userModel';
 import { IN_VALID_LOGIN, NO_USER } from '../types/messages';
-import { BAD_REQUEST, NOT_FOUND, SERVER_ERROR, SUCCESS } from '../types/statusCode';
+import {
+    BAD_REQUEST,
+    NOT_FOUND,
+    SERVER_ERROR,
+    SUCCESS,
+    UNAUTHORIZED,
+    FORBIDEN
+} from '../types/statusCode';
 import config from '../../config/config';
-import { validatePassword, userExist } from '../../utils';
-import { sendEmail } from '../../utils/sendMail';
-import { createConfirmationUrl } from '../../utils/createConfirmationUrl';
+import {
+    validatePassword,
+    createConfirmationUrl,
+    userExist,
+    getUserFromDatabase,
+    getUserFromToken,
+    sendEmail,
+    hashPassword
+} from '../../utils';
 
 interface IAuth<T> {
     login: () => T;
@@ -41,6 +54,7 @@ export default class AuthController<IAuth> {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
+
     static async login(req: Request, res: Response, next: NextFunction) {
         try {
             const { email, password }: ILogin = req.body;
@@ -100,6 +114,47 @@ export default class AuthController<IAuth> {
             return res.status(SUCCESS).json({ message: 'Successfully reset password.' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e });
+        }
+    }
+
+    static async changePassword(req: Request, res: Response, next: NextFunction) {
+        try {
+            const tokenUser = await getUserFromToken(req);
+
+            if (!tokenUser) {
+                return res
+                    .status(UNAUTHORIZED)
+                    .json({ message: 'User must be logined in to change password' });
+            }
+
+            const dbUser = await getUserFromDatabase(tokenUser.email);
+
+            const { oldPassword, newPassword } = req.body;
+            console.log(oldPassword, newPassword);
+
+            if (!oldPassword || !newPassword) {
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Please provide your old and new password' });
+            }
+            const isValidPass = await validatePassword(oldPassword, dbUser.password);
+
+            if (isValidPass) {
+                const newHashpass = await hashPassword(newPassword);
+                const user = await User.updateOne(
+                    { email: tokenUser.email },
+                    {
+                        $set: {
+                            password: newHashpass
+                        }
+                    }
+                );
+
+                return res.status(SUCCESS).json({ message: 'Successfully updated password.' });
+            }
+            return res.status(FORBIDEN).json({ message: 'Old password incorrect' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
 }

@@ -1,6 +1,6 @@
 import { Request } from 'express';
 import jwt from 'jsonwebtoken';
-import { NO_USER } from 'server/types/messages';
+import { NO_USER } from '../server/types/messages';
 import User from '../server/models/userModel';
 import config from '../config/config';
 
@@ -17,6 +17,9 @@ export const getUserFromDatabase = async (email: string) => {
 export const getUserFromToken = async (req: Request) => {
     try {
         const token = <string>req.headers?.authorization?.split(' ')[1];
+        if (!token) {
+            throw Error('User Unauthorized');
+        }
         const jwtPayload = await (<any>jwt.verify(token, config.auth.jwt));
         const { user } = jwtPayload;
         return user;
