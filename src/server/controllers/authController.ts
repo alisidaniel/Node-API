@@ -21,7 +21,7 @@ export default class AuthController<IAuth> {
     static async register(req: Request, res: Response, next: NextFunction) {
         try {
             const { password, email, ...rest }: IUser = req.body;
-            if (userExist(email)) {
+            if (await userExist(email)) {
                 return res.status(BAD_REQUEST).json({ message: 'User already exist' });
             }
             const user = new User({ email, password, ...rest });
