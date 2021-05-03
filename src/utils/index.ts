@@ -3,6 +3,9 @@ import logger from './errorExecptionLogger';
 import corsOptions from './corsPermissions';
 import { hashPassword, validatePassword } from './hashPassword';
 import { userExist } from './userExist';
+import { getUserFromToken, getUserFromDatabase } from './findUser';
+import { createConfirmationUrl } from './createConfirmationUrl';
+import { sendEmail } from './sendMail';
 
 export {
     //
@@ -11,5 +14,9 @@ export {
     corsOptions,
     hashPassword,
     validatePassword,
-    userExist
+    userExist,
+    getUserFromDatabase,
+    getUserFromToken,
+    createConfirmationUrl,
+    sendEmail
 };

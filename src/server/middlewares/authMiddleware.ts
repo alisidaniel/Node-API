@@ -1,10 +1,8 @@
 import { Request, Response, NextFunction } from 'express';
-import jwt from 'jsonwebtoken';
 import User from '../models/userModel';
-import config from '../../config/config';
 import { UNAUTHORIZED } from '../types/statusCode';
 import { ACCOUNT_INACTIVE, UNAUTHORIZED as MESSAGE_UNAUTHORIZED } from '../types/messages';
-import { getUserFromDatabase, getUserFromToken } from 'utils/findUser';
+import { getUserFromDatabase, getUserFromToken } from '../../utils/findUser';
 
 export const isAccountVerified = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -15,10 +13,19 @@ export const isAccountVerified = async (req: Request, res: Response, next: NextF
         }
         next();
     } catch (e) {
-        next({
-            status: 401,
-            message: e
-        });
+        return res.status(UNAUTHORIZED).json({ message: e.message });
+    }
+};
+
+export const isAuthorized = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user = await getUserFromToken(req);
+        if (!user) {
+            return res.status(UNAUTHORIZED).json({ message: ACCOUNT_INACTIVE });
+        }
+        next();
+    } catch (e) {
+        return res.status(UNAUTHORIZED).json({ message: e.message });
     }
 };
 
