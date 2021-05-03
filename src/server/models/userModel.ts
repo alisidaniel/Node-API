@@ -129,7 +129,7 @@ const userModel = new Schema<UserDocument>(
 
 // VIRTUALS *//
 userModel.virtual('fullName').get(function (this: UserDocument) {
-    return this.firstName + this.middleName + this.lastName;
+    return `${this.firstName || ''} ${this.middleName || ''} ${this.lastName || ''}`;
 });
 
 //* METHODS *//
