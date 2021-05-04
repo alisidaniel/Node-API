@@ -44,8 +44,10 @@ export default class AuthController<IAuth> {
 
             // Dispatch email
             const userId = user._id;
+            const type = 'Confirm Email';
+            const title = 'Thank you for registering with Midlman';
             const emailQueue = new mailJob('emailQueue');
-            emailQueue.addJob('EmailVerification', { email, userId });
+            emailQueue.addJob('EmailVerification', { email, userId, type, title });
             emailQueue.consumeJob('EmailVerification', await consumeEmailJob);
 
             return res.status(SUCCESS).json({
@@ -90,6 +92,12 @@ export default class AuthController<IAuth> {
             const user = await User.findOne({ email });
             if (user) {
                 const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 });
+                // Dispatch email
+                const type = 'Reset Password';
+                const title = 'Click below link to reset your password';
+                const emailQueue = new mailJob('emailQueue');
+                emailQueue.addJob('resetPassword', { email, token, type, title });
+                emailQueue.consumeJob('resetPassword', await consumeEmailJob);
                 return res
                     .status(SUCCESS)
                     .json({ message: 'Password reset link have been sent to your email' });
