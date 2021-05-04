@@ -13,13 +13,13 @@ import {
 import config from '../../config/config';
 import {
     validatePassword,
-    createConfirmationUrl,
     userExist,
     getUserFromDatabase,
     getUserFromToken,
-    sendEmail,
     hashPassword
 } from '../../utils';
+import mailJob from '../jobs/email/emailJob';
+import { consumeEmailJob } from '../jobs/email/consumeJob';
 
 interface IAuth<T> {
     login: () => T;
@@ -41,12 +41,13 @@ export default class AuthController<IAuth> {
             }
             const user = new User({ email, password, ...rest });
             await user.save();
-            await sendEmail(
-                email,
-                await createConfirmationUrl(user._id),
-                'Confirm Email',
-                'Thank you for registering with Midlman'
-            );
+
+            // Dispatch email
+            const userId = user._id;
+            const emailQueue = new mailJob('emailQueue');
+            emailQueue.addJob('EmailVerification', { email, userId });
+            emailQueue.consumeJob('EmailVerification', await consumeEmailJob);
+
             return res.status(SUCCESS).json({
                 message: 'Successfully registered, please proceed to confirm your mail'
             });

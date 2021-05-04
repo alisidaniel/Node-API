@@ -1,5 +1,5 @@
 import Queue from 'bull';
-import config from '../../config/config';
+import config from '../../../config/config';
 export default class mailJobScheule {
     queueName: any;
     constructor(queueName: any) {

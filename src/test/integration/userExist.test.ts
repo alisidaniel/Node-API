@@ -29,7 +29,7 @@ describe('User Exist', () => {
                 userType: 0
             };
             const person = new User(user);
-            person.save();
+            await person.save();
 
             const userCheck = await userExist(user.email);
             expect(typeof userCheck === 'boolean').toBeTruthy();
