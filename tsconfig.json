@@ -6,18 +6,6 @@
         "strict": true,
         "moduleResolution": "node",
         "baseUrl": "./src",
-        "paths": {
-            "@test/*": ["test/*"],
-            "@database/*": ["database/*"],
-            "@config/*": ["config/*"],
-            "@utils/*": ["utils/*"],
-            "@controllers/*": ["server/controllers/*"],
-            "@middlewares/*": ["server/middlewares/*"],
-            "@models/*": ["server/models/*"],
-            "@types/*": ["server/types/*"],
-            "@routes/*": ["server/routes/*"],
-            "@storage/*": ["server/storage/*"]
-        },
         "esModuleInterop": true,
         "forceConsistentCasingInFileNames": true
     },

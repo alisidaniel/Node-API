@@ -1,7 +1,8 @@
 import winston from 'winston';
 import path from 'path';
+import config from '../config/config';
 
-const logger = winston.createLogger({
+let logger = winston.createLogger({
     level: 'info',
     format: winston.format.json(),
     defaultMeta: { service: 'error-service' },
@@ -20,10 +21,7 @@ const logger = winston.createLogger({
     ]
 });
 
-// If we're not in production then log to the `console` with the format:
-// `${info.level}: ${info.message} JSON.stringify({ ...rest }) `
-//
-if (process.env.NODE_ENV !== 'production') {
+if (config.node_env !== 'production') {
     logger.add(
         new winston.transports.Console({
             format: winston.format.simple()

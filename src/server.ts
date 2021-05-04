@@ -3,17 +3,15 @@ import 'module-alias/register';
 import http from 'http';
 import express, { Application } from 'express';
 import cors from 'cors';
-import config from '@config/config';
-import database from '@database/connection';
-import corsOptions from '@utils/corsPermissions';
+import config from './config/config';
+import database from './database/connection';
 
 import morgan from 'morgan';
-import errorRequest from '@utils/errorRequest';
-import errorLogger from '@utils/errorExecptionLogger';
+import { errorRequest, logger, corsOptions } from './utils';
 
 // ROUTERS
 import authRouter from './server/routes/authRoute';
-import errorHandler from '@middlewares/errorHandler';
+import errorHandler from './server/middlewares/errorHandler';
 
 const app: Application = express();
 
@@ -23,10 +21,13 @@ app.use(express.json());
 app.use(cors(corsOptions));
 app.use(errorHandler);
 
-app.use('/', authRouter);
+const baseRoute = '/api/v1';
+
+app.use(`${baseRoute}/auth`, authRouter);
+// app.use('/api/v1/product', pro)
 
 // ERROR LOG HANDLER
-app.use(morgan('combined', { stream: errorLogger }));
+app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
 app.use(errorRequest);
 
 //* SERVER */

@@ -1,5 +1,5 @@
-import { router } from '@utils/router';
-import ProductController from '@controllers/productController';
+import { router } from '../../utils/router';
+import ProductController from '../controllers/productController';
 
 // GET ALL PRODUCTS
 router.get('/', ProductController.getAllProducts);

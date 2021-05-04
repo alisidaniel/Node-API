@@ -1,0 +1,2 @@
+{"message":"::1 - - [01/May/2021:19:17:54 +0000] \"GET /api/v1/auth/login HTTP/1.1\" 404 156 \"-\" \"Mozilla/5.0 (X11; Linux x86_64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/90.0.4430.85 Safari/537.36\"\n","level":"info","service":"error-service"}
+{"message":"::ffff:127.0.0.1 - - [02/May/2021:16:43:33 +0000] \"POST /api/v1/auth/ HTTP/1.1\" 404 152 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}

@@ -1,21 +1,20 @@
-import express, { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
+import { ErrorRequestHandler, Request, Response, NextFunction } from 'express';
 import winston from 'winston';
+import moment from 'moment';
 
-const requestError = function (
-    err: ErrorRequestHandler,
-    req: Request,
-    res: Response,
-    next: NextFunction
-) {
-    winston.error(`${err || 500} - ${err} - ${req.originalUrl} - ${req.method} - ${req.ip}`);
+const getTimeStamp = (): string => new Date().toISOString();
 
+const requestError = function (err: any, req: Request, res: Response, next: NextFunction) {
+    winston.error(
+        `${err.statusCode || 500} - ${err.statusMessage} - ${req.originalUrl} - ${req.method} - ${
+            req.ip
+        } -${moment(getTimeStamp()).format('MMMM Do YYYY, h:mm:ss a')}`
+    );
     //error
     //warn
     //verbose
     //debug
     //silly
-
-    res.status(500).json({ message: err, status: err || 500 });
 };
 
 export default requestError;

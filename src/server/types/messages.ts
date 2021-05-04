@@ -12,6 +12,8 @@ const ACCOUNT_INACTIVE = 'User account must be verified.';
 
 const IN_VALID_LOGIN = 'Invalid email or password.';
 
+const UNAUTHORIZED = 'User not authorized to perform action.';
+
 export {
     AUTHORIZATION,
     AUTHENTICATION,
@@ -19,5 +21,6 @@ export {
     INVALID_ROUTE,
     SERVER_ERROR,
     IN_VALID_LOGIN,
-    ACCOUNT_INACTIVE
+    ACCOUNT_INACTIVE,
+    UNAUTHORIZED
 };
