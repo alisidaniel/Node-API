@@ -12,6 +12,7 @@ import { errorRequest, logger, corsOptions } from './utils';
 // ROUTERS
 import authRouter from './server/routes/authRoute';
 import adminRoute from './server/routes/adminRoute';
+import userRoute from './server/routes/userRoute';
 
 //  ERROR HANDLER MIDDLEWARE
 import errorHandler from './server/middlewares/errorHandler';
@@ -28,6 +29,7 @@ const baseRoute = '/api/v1';
 
 app.use(`${baseRoute}/auth`, authRouter);
 app.use(`${baseRoute}/admin`, adminRoute);
+app.use(`${baseRoute}/user`, userRoute);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
