@@ -11,6 +11,9 @@ import { errorRequest, logger, corsOptions } from './utils';
 
 // ROUTERS
 import authRouter from './server/routes/authRoute';
+import adminRoute from './server/routes/adminRoute';
+
+//  ERROR HANDLER MIDDLEWARE
 import errorHandler from './server/middlewares/errorHandler';
 
 const app: Application = express();
@@ -24,7 +27,7 @@ app.use(errorHandler);
 const baseRoute = '/api/v1';
 
 app.use(`${baseRoute}/auth`, authRouter);
-// app.use('/api/v1/product', pro)
+app.use(`${baseRoute}/admin`, adminRoute);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
