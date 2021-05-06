@@ -4,12 +4,15 @@ import express, { Application } from 'express';
 import http from 'http';
 import 'module-alias/register';
 import morgan from 'morgan';
+import passport from 'passport';
 import config from './config/config';
 import database from './database/connection';
+//  ERROR HANDLER MIDDLEWARE
 import errorHandler from './server/middlewares/errorHandler';
-import passport from 'passport';
+import adminRoute from './server/routes/adminRoute';
 // ROUTERS
 import authRouter from './server/routes/authRoute';
+import userRoute from './server/routes/userRoute';
 import { corsOptions, errorRequest, logger } from './utils';
 
 const app: Application = express();
@@ -25,7 +28,8 @@ app.use(passport.session());
 const baseRoute = '/api/v1';
 
 app.use(`${baseRoute}/auth`, authRouter);
-// app.use('/api/v1/product', pro)
+app.use(`${baseRoute}/admin`, adminRoute);
+app.use(`${baseRoute}/user`, userRoute);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
