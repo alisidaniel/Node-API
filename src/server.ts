@@ -1,17 +1,16 @@
 // MODULE IMPORTS
-import 'module-alias/register';
-import http from 'http';
-import express, { Application } from 'express';
 import cors from 'cors';
+import express, { Application } from 'express';
+import http from 'http';
+import 'module-alias/register';
+import morgan from 'morgan';
 import config from './config/config';
 import database from './database/connection';
-
-import morgan from 'morgan';
-import { errorRequest, logger, corsOptions } from './utils';
-
+import errorHandler from './server/middlewares/errorHandler';
+import passport from 'passport';
 // ROUTERS
 import authRouter from './server/routes/authRoute';
-import errorHandler from './server/middlewares/errorHandler';
+import { corsOptions, errorRequest, logger } from './utils';
 
 const app: Application = express();
 
@@ -20,6 +19,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(errorHandler);
+app.use(passport.initialize());
+app.use(passport.session());
 
 const baseRoute = '/api/v1';
 
