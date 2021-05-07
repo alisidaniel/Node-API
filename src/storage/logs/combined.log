@@ -27,3 +27,10 @@
 {"message":"::ffff:127.0.0.1 - - [06/May/2021:08:40:27 +0000] \"POST /api/v1/auth/verify/email?token=55556444444 HTTP/1.1\" 404 164 \"-\" \"PostmanRuntime/7.26.8\"\n","level":"info","service":"error-service"}
 {"message":"::ffff:127.0.0.1 - - [06/May/2021:08:41:09 +0000] \"POST /api/v1/auth/verify/email/ HTTP/1.1\" 404 165 \"-\" \"PostmanRuntime/7.26.8\"\n","level":"info","service":"error-service"}
 {"message":"::ffff:127.0.0.1 - - [06/May/2021:08:41:11 +0000] \"POST /api/v1/auth/verify/email/ HTTP/1.1\" 404 165 \"-\" \"PostmanRuntime/7.26.8\"\n","level":"info","service":"error-service"}
+{"message":"::ffff:127.0.0.1 - - [07/May/2021:10:30:54 +0000] \"PUT /api/v1/product/edit HTTP/1.1\" 404 158 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"error\n","level":"info","service":"error-service"}
+{"message":"::ffff:127.0.0.1 - - [07/May/2021:11:16:11 +0000] \"POST /api/v1/product HTTP/1.1\" 404 154 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"error\n","level":"info","service":"error-service"}
+{"message":"::ffff:127.0.0.1 - - [07/May/2021:12:26:21 +0000] \"DELETE /api/v1/product/ HTTP/1.1\" 404 157 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"error\n","level":"info","service":"error-service"}
+{"message":"::ffff:127.0.0.1 - - [07/May/2021:13:08:34 +0000] \"POST /api/v1/category/create HTTP/1.1\" 404 162 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}

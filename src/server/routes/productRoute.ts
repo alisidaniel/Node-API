@@ -5,15 +5,15 @@ import ProductController from '../controllers/productController';
 router.get('/', ProductController.getAllProducts);
 
 // GET SINGLE PRODUCT
-router.get('/:id', ProductController.getSingleProduct);
+router.get('/:productId', ProductController.getSingleProduct);
 
 // CREATE SINGLE PRODUCT
 router.post('/', ProductController.createProduct);
 
 // EDIT SINGLE PRODUCT
-router.put('/:id', ProductController.editSingleProduct);
+router.put('/:productId', ProductController.editSingleProduct);
 
 // DELETE SINGLE PRODUCT
-router.put('/:id', ProductController.deleteSingleProduct);
+router.delete('/:productId', ProductController.deleteSingleProduct);
 
 export default router;

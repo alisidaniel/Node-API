@@ -11,7 +11,7 @@ export default new FacebookStrategy(
         profileFields: ['id', 'displayName', 'name', 'gender', 'picture.type(large)', 'email'],
         passReqToCallback: true
     },
-    (req: any, accessToken, refreshToken, profile, done) => {
+    (req: any, accessToken: string, refreshToken: string, profile: any, done: any) => {
         // do magic here
     }
 );

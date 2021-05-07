@@ -16,6 +16,12 @@ const UNAUTHORIZED = 'User not authorized to perform action.';
 
 const USER_EXIST = 'User already exist';
 
+const UPDATE_SUCCESS = 'Successfully updated';
+
+const DELETED_SUCCESS = 'Successfully deleted';
+
+const NOT_FOUND = 'Not found';
+
 export {
     AUTHORIZATION,
     AUTHENTICATION,
@@ -25,5 +31,8 @@ export {
     IN_VALID_LOGIN,
     ACCOUNT_INACTIVE,
     UNAUTHORIZED,
-    USER_EXIST
+    USER_EXIST,
+    UPDATE_SUCCESS,
+    DELETED_SUCCESS,
+    NOT_FOUND
 };
