@@ -14,6 +14,7 @@ import adminRoute from './server/routes/adminRoute';
 import authRouter from './server/routes/authRoute';
 import userRoute from './server/routes/userRoute';
 import { corsOptions, errorRequest, logger } from './utils';
+// import fbStrategy from './server/middlewares/facebookStrategy';
 
 const app: Application = express();
 
@@ -24,6 +25,7 @@ app.use(cors(corsOptions));
 app.use(errorHandler);
 app.use(passport.initialize());
 app.use(passport.session());
+// app.use(fbStrategy);
 
 const baseRoute = '/api/v1';
 

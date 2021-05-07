@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import jwt from 'jsonwebtoken';
-import User, { IUser } from './../models/userModel';
+import User, { IUser, EUserType } from './../models/userModel';
 import { IN_VALID_LOGIN, NO_USER } from '../types/messages';
 import {
     BAD_REQUEST,
@@ -32,10 +32,16 @@ interface ILogin {
     email: string;
     password: string;
 }
+
+interface IPortal extends IUser {
+    cacDoc: string;
+    licenseDoc: string;
+}
+
 export default class AuthController<IAuth> {
     static async register(req: Request, res: Response, next: NextFunction) {
         try {
-            const { password, email, ...rest }: IUser = req.body;
+            const { password, email, userType, ...rest }: IUser = req.body;
             const user = new User({ email, password, ...rest });
             await user.save();
 
@@ -157,6 +163,26 @@ export default class AuthController<IAuth> {
             return res.status(FORBIDEN).json({ message: 'Old password incorrect' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+    static async verifyEmail(req: Request, res: Response, next: NextFunction) {
+        try {
+            const userId = req.params;
+            console.log(req.params);
+
+            const user = await User.findOne({ _id: userId });
+
+            if (user) {
+                if (user.active)
+                    res.status(FORBIDEN).json({ message: 'Account already verified.' });
+
+                await User.updateOne({ email: user.email }, { $set: { active: true } });
+
+                return res.status(SUCCESS).json({ message: 'Successfully reset password.' });
+            }
+            return res.status(NOT_FOUND).json({ message: NO_USER });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e });
         }
     }
 }

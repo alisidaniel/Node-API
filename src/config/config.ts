@@ -13,6 +13,7 @@ const REDIS_PORT: number = parseInt(<string>process.env.REDIS_PORT, 10) || 6379;
 const REDIS_HOST: string = process.env.REDIS_HOST || '13.59.49.204';
 const REDIS_DB: number = parseInt(<string>process.env.REDIS_DB, 10) || 3;
 const REDIS_PASSWORD: string = process.env.REDIS_PASSWORD || 'mypassword';
+const FACEBOOK_APP_ID: string = process.env.FACEBOOK_APP_ID || 'fbappId';
 
 const SERVER = {
     hostname: SERVER_HOST_NAME,
@@ -40,13 +41,19 @@ const REDIS = {
     PASSWORD: REDIS_PASSWORD
 };
 
+const PASSPORT = {
+    fbId: FACEBOOK_APP_ID,
+    callbackUrl: `${FRONTEND_URL}/auth/facebook`
+};
+
 const config = {
     server: SERVER,
     mongo: MONGO,
     url: URL,
     auth: SECRET,
     node_env: NODE_ENV,
-    redis: REDIS
+    redis: REDIS,
+    passport: PASSPORT
     // others ...
 };
 
