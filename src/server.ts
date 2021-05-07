@@ -1,21 +1,20 @@
 // MODULE IMPORTS
-import 'module-alias/register';
-import http from 'http';
-import express, { Application } from 'express';
 import cors from 'cors';
+import express, { Application } from 'express';
+import http from 'http';
+import 'module-alias/register';
+import morgan from 'morgan';
+import passport from 'passport';
 import config from './config/config';
 import database from './database/connection';
-
-import morgan from 'morgan';
-import { errorRequest, logger, corsOptions } from './utils';
-
-// ROUTERS
-import authRouter from './server/routes/authRoute';
-import adminRoute from './server/routes/adminRoute';
-import userRoute from './server/routes/userRoute';
-
 //  ERROR HANDLER MIDDLEWARE
 import errorHandler from './server/middlewares/errorHandler';
+import adminRoute from './server/routes/adminRoute';
+// ROUTERS
+import authRouter from './server/routes/authRoute';
+import userRoute from './server/routes/userRoute';
+import { corsOptions, errorRequest, logger } from './utils';
+// import fbStrategy from './server/middlewares/facebookStrategy';
 
 const app: Application = express();
 
@@ -24,6 +23,9 @@ app.use(express.urlencoded({ extended: false }));
 app.use(express.json());
 app.use(cors(corsOptions));
 app.use(errorHandler);
+app.use(passport.initialize());
+app.use(passport.session());
+// app.use(fbStrategy);
 
 const baseRoute = '/api/v1';
 

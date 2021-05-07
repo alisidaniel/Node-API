@@ -1,14 +1,14 @@
-import { Request, Response, NextFunction } from 'express';
-import User, { IUser } from '../models/userModel';
-import Admin, { IAdmin } from '../models/adminModel';
-import { BAD_REQUEST, UNAUTHORIZED, SERVER_ERROR } from '../types/statusCode';
+import { NextFunction, Request, Response } from 'express';
+import { adminExist, userExist } from '../../utils';
+import { getUserFromDatabase, getUserFromToken } from '../../utils/findUser';
+import { IAdmin } from '../models/adminModel';
+import User, { EUserType, IUser } from '../models/userModel';
 import {
     ACCOUNT_INACTIVE,
     UNAUTHORIZED as MESSAGE_UNAUTHORIZED,
     USER_EXIST
 } from '../types/messages';
-import { getUserFromDatabase, getUserFromToken } from '../../utils/findUser';
-import { userExist, adminExist } from '../../utils';
+import { BAD_REQUEST, SERVER_ERROR, UNAUTHORIZED } from '../types/statusCode';
 
 export const isAccountVerified = async (req: Request, res: Response, next: NextFunction) => {
     try {
@@ -81,6 +81,22 @@ export const adminAccountExist = async (req: Request, res: Response, next: NextF
             return res.status(BAD_REQUEST).json({ message: USER_EXIST });
         }
         next();
+    } catch (e) {
+        return res.status(SERVER_ERROR).json({ message: e.message });
+    }
+};
+
+export const userTypeData = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const user: IUser = req.body;
+        if (user.userType === EUserType.Portal) {
+            if (!user.cacDoc || !user.licenseDoc) {
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Please provide a CAC and license document' });
+            }
+            next();
+        }
     } catch (e) {
         return res.status(SERVER_ERROR).json({ message: e.message });
     }

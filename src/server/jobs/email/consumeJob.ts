@@ -1,8 +1,16 @@
 import { sendEmail, createConfirmationUrl } from '../../../utils';
 
-export const consumeEmailJob = async (data: any) => {
+interface IProps {
+    email: string;
+    userId: string;
+    type: string;
+    title: string;
+}
+
+export const consumeEmailJob = async ({ email, userId, type, title }: IProps) => {
+    console.log({ email, userId, type, title });
     try {
-        await sendEmail(data.email, await createConfirmationUrl(data.id), data.type, data.title);
+        await sendEmail(email, await createConfirmationUrl(userId), type, title);
     } catch (e) {
         throw new Error(e);
     }
