@@ -97,6 +97,7 @@ export const userTypeData = async (req: Request, res: Response, next: NextFuncti
             }
             next();
         }
+        next();
     } catch (e) {
         return res.status(SERVER_ERROR).json({ message: e.message });
     }

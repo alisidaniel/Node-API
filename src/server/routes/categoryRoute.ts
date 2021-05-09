@@ -1,5 +1,7 @@
+import express from 'express';
 import CategoryController from '../controllers/categoryController';
-import { router } from '../../utils/router';
+
+const router = express.Router();
 
 router.post('/', CategoryController.create);
 

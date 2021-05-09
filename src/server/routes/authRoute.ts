@@ -1,4 +1,4 @@
-import { router } from '../../utils/router';
+import express from 'express';
 import AuthController from '../controllers/authController';
 import {
     isAccountVerified,
@@ -6,6 +6,8 @@ import {
     userAccountExist,
     userTypeData
 } from '../middlewares/authMiddleware';
+
+const router = express.Router();
 
 router.post('/login', AuthController.login);
 

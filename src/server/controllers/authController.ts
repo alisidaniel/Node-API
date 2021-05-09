@@ -43,6 +43,7 @@ export default class AuthController<IAuth> {
         try {
             const { password, email, userType, ...rest }: IUser = req.body;
             const user = new User({ email, password, ...rest });
+            console.log(user);
             await user.save();
 
             // Dispatch email
@@ -167,18 +168,18 @@ export default class AuthController<IAuth> {
     }
     static async verifyEmail(req: Request, res: Response, next: NextFunction) {
         try {
-            const userId = req.params;
-            console.log(req.params);
+            const { token } = req.params;
 
-            const user = await User.findOne({ _id: userId });
+            const user = await User.findById(token);
+            console.log(user);
 
             if (user) {
                 if (user.active)
-                    res.status(FORBIDEN).json({ message: 'Account already verified.' });
-
-                await User.updateOne({ email: user.email }, { $set: { active: true } });
-
-                return res.status(SUCCESS).json({ message: 'Successfully reset password.' });
+                    return res.status(FORBIDEN).json({ message: 'Account already verified.' });
+                else {
+                    await User.updateOne({ email: user.email }, { $set: { active: true } });
+                    return res.status(SUCCESS).json({ message: 'Email verification successful.' });
+                }
             }
             return res.status(NOT_FOUND).json({ message: NO_USER });
         } catch (e) {

@@ -1,5 +1,7 @@
-import { router } from '../../utils/router';
+import express from 'express';
 import ProductController from '../controllers/productController';
+
+const router = express.Router();
 
 // GET ALL PRODUCTS
 router.get('/', ProductController.getAllProducts);
