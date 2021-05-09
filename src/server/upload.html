@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+    <head></head>
+    <body>
+        <header></header>
+        <form method="post" enctype="multipart/form-data">
+            <input type="file" id="image" name="image" multiple />
+            <button type="button" id="submit" id="btn" class="btn">submit</button>
+        </form>
+        <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+        <script>
+            $(document).ready(function () {
+                function getBase64(file) {
+                    return new Promise((resolve, reject) => {
+                        const reader = new FileReader();
+                        reader.readAsDataURL(file);
+                        reader.onload = () => resolve(reader.result);
+                        reader.onerror = (error) => reject(error);
+                    });
+                }
+                var arrayImage = [];
+
+                $('input[type="file"]').change(function (e) {
+                    var files = e.target.files;
+                    for (let i = 0; i < files.length; i++) {
+                        const element = files[i];
+                        getBase64(element)
+                            .then(function (res) {
+                                arrayImage.push(res);
+                            })
+                            .catch(function (err) {
+                                console.log(err);
+                            });
+                    }
+                    //Ajax Function to send a get request
+                    // send to server
+                });
+
+                $('.btn').click(function () {
+                    // console.log('got here');
+                    const url = 'http://127.0.0.1:5000/api/v1/product/create';
+                    var data = {
+                        name: 'Iphone',
+                        description: 'hi is woking',
+                        unitPrice: 700,
+                        user: '6093cc181c6519b5c1a995b2',
+                        image: arrayImage,
+                        category: 'drugs',
+                        brand: 'iphone',
+                        stock: 4
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        dataType: 'json',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                            //if request if made successfully then the response represent the data
+                            console.log('SUCCESS', response);
+                        },
+                        error: function (err) {
+                            console.log(err.status);
+                        }
+                    });
+                });
+            });
+        </script>
+    </body>
+</html>

@@ -8,7 +8,7 @@ router.get('/', ProductController.getAllProducts);
 router.get('/:productId', ProductController.getSingleProduct);
 
 // CREATE SINGLE PRODUCT
-router.post('/', ProductController.createProduct);
+router.post('/create', ProductController.createProduct);
 
 // EDIT SINGLE PRODUCT
 router.put('/:productId', ProductController.editSingleProduct);
