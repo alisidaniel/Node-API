@@ -1,6 +1,7 @@
-import { router } from '../../utils/router';
+import express from 'express';
 import adminController from '../controllers/adminController';
-import { isAuthorized, adminAccountExist } from '../middlewares/authMiddleware';
+import { adminAccountExist, isAuthorized } from '../middlewares/authMiddleware';
+const router = express.Router();
 
 router.post('/auth/login', adminController.login);
 
