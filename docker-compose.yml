@@ -6,5 +6,14 @@ services:
             dockerfile: Dockerfile
         environment:
             - DB=mongodb+srv://user:1234567890@cluster0.ecduv.mongodb.net/test
+        volumes:
+            - ./:/user/app
         ports:
-            - '5000:5000'
+            - 5000:5000
+
+    ngnix:
+        image: nginx:latest
+        ports: 
+            - 80:80
+        volumes: 
+            - ./nginx.conf:/etc/nginx/nginx.conf
