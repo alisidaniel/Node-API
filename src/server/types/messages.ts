@@ -14,6 +14,14 @@ const IN_VALID_LOGIN = 'Invalid email or password.';
 
 const UNAUTHORIZED = 'User not authorized to perform action.';
 
+const USER_EXIST = 'User already exist';
+
+const UPDATE_SUCCESS = 'Successfully updated';
+
+const DELETED_SUCCESS = 'Successfully deleted';
+
+const NOT_FOUND = 'Not found';
+
 export {
     AUTHORIZATION,
     AUTHENTICATION,
@@ -22,5 +30,9 @@ export {
     SERVER_ERROR,
     IN_VALID_LOGIN,
     ACCOUNT_INACTIVE,
-    UNAUTHORIZED
+    UNAUTHORIZED,
+    USER_EXIST,
+    UPDATE_SUCCESS,
+    DELETED_SUCCESS,
+    NOT_FOUND
 };

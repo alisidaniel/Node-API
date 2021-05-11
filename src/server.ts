@@ -1,30 +1,41 @@
 // MODULE IMPORTS
-import 'module-alias/register';
-import http from 'http';
-import express, { Application } from 'express';
 import cors from 'cors';
+import express, { Application } from 'express';
+import http from 'http';
+import 'module-alias/register';
+import morgan from 'morgan';
+import passport from 'passport';
 import config from './config/config';
 import database from './database/connection';
-
-import morgan from 'morgan';
-import { errorRequest, logger, corsOptions } from './utils';
-
+//  ERROR HANDLER MIDDLEWARE
+import errorHandler from './server/middlewares/errorHandler';
+import adminRoute from './server/routes/adminRoute';
 // ROUTERS
 import authRouter from './server/routes/authRoute';
-import errorHandler from './server/middlewares/errorHandler';
+import userRoute from './server/routes/userRoute';
+import categoryRouter from './server/routes/categoryRoute';
+import productRouter from './server/routes/productRoute';
+import { corsOptions, errorRequest, logger } from './utils';
+// import fbStrategy from './server/middlewares/facebookStrategy';
 
 const app: Application = express();
 
 //*  MIDDLEWARES */
-app.use(express.urlencoded({ extended: false }));
-app.use(express.json());
+app.use(express.urlencoded({ extended: false, limit: '50mb' }));
+app.use(express.json({ limit: '50mb' }));
 app.use(cors(corsOptions));
 app.use(errorHandler);
+app.use(passport.initialize());
+app.use(passport.session());
+// app.use(fbStrategy);
 
 const baseRoute = '/api/v1';
 
 app.use(`${baseRoute}/auth`, authRouter);
-// app.use('/api/v1/product', pro)
+app.use(`${baseRoute}/admin`, adminRoute);
+app.use(`${baseRoute}/user`, userRoute);
+app.use(`${baseRoute}/category`, categoryRouter);
+app.use(`${baseRoute}/product`, productRouter);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));

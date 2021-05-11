@@ -1,8 +1,13 @@
 import { Document, model, Types, Schema } from 'mongoose';
 import { hashPassword } from '../../utils';
-enum EUserType {
+export enum EUserType {
     Express = 0,
     Portal = 1
+}
+enum EGender {
+    Male = 0,
+    Female = 1,
+    Other = 2
 }
 
 export interface IUser {
@@ -14,6 +19,7 @@ export interface IUser {
     address?: Map<string, string>;
     username: string;
     password: string;
+    gender?: EGender;
     ePin?: number;
     photo?: string;
     businessType?: string;
@@ -75,7 +81,7 @@ const userModel = new Schema<UserDocument>(
             required: false
         },
         gender: {
-            type: Number,
+            type: String,
             enum: [0, 1],
             default: 0,
             required: false

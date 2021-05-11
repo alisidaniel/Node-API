@@ -1,15 +1,24 @@
-import { router } from '../../utils/router';
+import express from 'express';
 import AuthController from '../controllers/authController';
-import { isAccountVerified, isAuthorized } from '../middlewares/authMiddleware';
+import {
+    isAccountVerified,
+    isAuthorized,
+    userAccountExist,
+    userTypeData
+} from '../middlewares/authMiddleware';
+
+const router = express.Router();
 
 router.post('/login', AuthController.login);
 
-router.post('/register', AuthController.register);
+router.post('/register', [userAccountExist, userTypeData], AuthController.register);
 
-router.post('/reset/password/token', AuthController.sendPasswordResetToken);
+router.post('/forgot/password', [userAccountExist], AuthController.sendPasswordResetToken);
 
-router.post('/reset/password', AuthController.resetPassword);
+router.post('/pssword/reset', [isAuthorized], AuthController.resetPassword);
 
 router.post('/change/password', [isAuthorized, isAccountVerified], AuthController.changePassword);
+
+router.post('/verify/email/:token', AuthController.verifyEmail);
 
 export default router;
