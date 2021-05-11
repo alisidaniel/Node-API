@@ -1,4 +1,6 @@
+import { unique } from 'faker';
 import { Document, model, Types, Schema } from 'mongoose';
+import { hashPassword } from '../../utils';
 
 export interface IAdmin {
     firstName: string;
@@ -28,6 +30,13 @@ const adminModel = new Schema<AdminDocument>(
         middleName: {
             type: String,
             required: false
+        },
+        username: {
+            type: String,
+            required: true,
+            unique: true,
+            min: 3,
+            max: 100
         },
         lastName: {
             type: String,
@@ -65,12 +74,12 @@ const adminModel = new Schema<AdminDocument>(
             default: false
         },
         roles: {
-            type: String,
-            enum: []
+            type: [String]
         },
         photo: {
             type: String,
-            required: false
+            required: false,
+            default: null
         }
     },
     {
@@ -84,11 +93,17 @@ adminModel.virtual('fullName').get(function (this: AdminDocument) {
 });
 
 //* MIDDLEWARE *//
-adminModel.pre<AdminDocument>('save', function (next) {
+adminModel.pre<AdminDocument>('save', async function (next) {
     if (this.isModified('password')) {
-        // this.password = hashPassword(this.password)  //import a hasPassword function
+        this.password = await hashPassword(this.password); //import a hasPassword function
     }
 });
+
+// adminModel.pre<AdminDocument>('update', async function (next) {
+//     if (this.isModified('password')) {
+//         this.password = await hashPassword(this.password); //import a hasPassword function
+//     }
+// });
 
 const Admin = model('Admin', adminModel);
 

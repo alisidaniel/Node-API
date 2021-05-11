@@ -1,10 +1,28 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const productModel = new Schema(
+export interface IProduct extends Document {
+    reference: string;
+    user: string;
+    name: string;
+    description: string;
+    image: string[];
+    category: string;
+    // subcategory: string;
+    brand: string;
+    unitPrice: number;
+    stock: number;
+    controlled: Boolean;
+    formulation: string;
+    reviews: { user: string; rate: number; comment: string }[];
+    promo: { discount: string; startDate: Date; endDate: Date }[];
+    variation: { name: string; variationType: string }[];
+}
+
+const productModel = new Schema<IProduct>(
     {
         reference: {
             type: String,
-            required: true
+            required: false
         },
         user: {
             type: Schema.Types.ObjectId,
@@ -28,6 +46,10 @@ const productModel = new Schema(
             type: String,
             required: true
         },
+        subcategory: {
+            type: String
+            // required: true
+        },
         brand: {
             type: String,
             required: true
@@ -39,6 +61,10 @@ const productModel = new Schema(
         packagePrice: {
             type: Number,
             required: false
+        },
+        controlled: {
+            type: Boolean,
+            default: false
         },
         variation: [
             {
