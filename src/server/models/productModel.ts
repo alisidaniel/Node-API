@@ -7,7 +7,7 @@ export interface IProduct extends Document {
     description: string;
     image: string[];
     category: string;
-    // subcategory: string;
+    subcategory: string;
     brand: string;
     unitPrice: number;
     stock: number;
@@ -47,8 +47,8 @@ const productModel = new Schema<IProduct>(
             required: true
         },
         subcategory: {
-            type: String
-            // required: true
+            type: String,
+            required: true
         },
         brand: {
             type: String,
@@ -71,6 +71,7 @@ const productModel = new Schema<IProduct>(
                 name: String,
                 price: Number,
                 color: String,
+                stock: Number,
                 default: []
             }
         ],
