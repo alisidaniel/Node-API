@@ -1,12 +1,12 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const cartModel = new Schema(
+const cartModel = new Schema<Document>(
     {
         user: {
             type: Schema.Types.ObjectId,
             ref: 'User'
         },
-        Products: [
+        products: [
             {
                 product: {
                     type: Schema.Types.ObjectId,
@@ -18,8 +18,8 @@ const cartModel = new Schema(
                     default: 1
                 },
                 variation: {
-                    type: Schema.Types.ObjectId,
-                    default: null
+                    type: [String],
+                    default: []
                 }
             }
         ],
@@ -32,6 +32,8 @@ const cartModel = new Schema(
         timestamps: true
     }
 );
+
+cartModel.pre<Document>('save', async function (next) {});
 
 const Cart = model('Cart', cartModel);
 
