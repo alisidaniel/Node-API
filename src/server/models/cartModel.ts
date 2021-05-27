@@ -18,8 +18,7 @@ const cartModel = new Schema<Document>(
                     default: 1
                 },
                 variation: {
-                    type: [String],
-                    default: []
+                    type: [Schema.Types.ObjectId]
                 }
             }
         ],
