@@ -37,3 +37,10 @@
 {"message":"::1 - - [24/May/2021:20:25:22 +0000] \"POST /api/v1/product HTTP/1.1\" 404 154 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
 {"message":"::1 - - [24/May/2021:20:25:47 +0000] \"POST /api/v1/product HTTP/1.1\" 404 154 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
 {"message":"::1 - - [26/May/2021:02:25:27 +0000] \"DELETE /api/v1/cart/item/delete/609866fcd111baba370741f2 HTTP/1.1\" 404 190 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [26/May/2021:23:31:04 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [26/May/2021:23:32:10 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [26/May/2021:23:38:58 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [26/May/2021:23:53:47 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [26/May/2021:23:55:39 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [27/May/2021:00:06:38 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [27/May/2021:00:10:18 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}

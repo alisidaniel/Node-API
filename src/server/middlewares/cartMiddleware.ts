@@ -22,19 +22,29 @@ export const productExist = async (req: Request, res: Response, next: NextFuncti
 
 export const variationExist = async (req: Request, res: Response, next: NextFunction) => {
     const { variation, productId } = req.body;
-    const validId = await validMongoId(productId);
-    if (!validId) return res.status(BAD_REQUEST).json({ message: 'Invalid product id.' });
-    const item = await Product.findOne({ _id: productId });
-    const itemVariation = item.variation;
-    let count = 0;
-    itemVariation.forEach((e: any) => {
-        if (e._id == variation) {
-            count++;
+    if (variation) {
+        if (typeof variation == 'string' && variation.trim() === '') {
+            return res.status(BAD_REQUEST).json({ message: "Variation can't be empty string." });
         }
-    });
-    if (count > 0 || variation.trim() === '') {
-        next();
-    } else {
-        return res.status(BAD_REQUEST).json({ message: 'Variation not found for this product.' });
+        const validId = await validMongoId(productId);
+        if (!validId) return res.status(BAD_REQUEST).json({ message: 'Invalid product id.' });
+        const item = await Product.findOne({ _id: productId });
+        const itemVariation = item.variation;
+        let count = 0;
+        itemVariation.forEach((e: any) => {
+            if (e._id == variation) {
+                count++;
+            }
+        });
+        if (count > 0 || variation.trim() === '') {
+            console.log('step 4', next);
+            next;
+        } else {
+            console.log('step 5');
+            return res
+                .status(BAD_REQUEST)
+                .json({ message: 'Variation not found for this product.' });
+        }
     }
+    next();
 };

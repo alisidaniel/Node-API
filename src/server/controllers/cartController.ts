@@ -15,7 +15,6 @@ export default class cartContoller {
             const { productId, quantity, variation }: IRequest = req.body;
             const { _id } = await getUserFromToken(req);
             const cartItem = await Cart.findOne({ user: _id });
-            console.log('top ', quantity);
             if (!cartItem) {
                 await Cart.create({
                     user: _id,
@@ -32,17 +31,18 @@ export default class cartContoller {
                 let products = cartItem[0].products;
                 let count = 0;
                 for (let i = 0; i < products.length; i++) {
-                    count++;
                     // if product exist increment quantity by 1
                     if (products[i].product == productId) {
+                        count++;
                         // increment quantity if product is in array of products
                         if (products[i].quantity === quantity) {
                             // increment by 1
-                            products[i].quantity = quantity + 1;
+                            products[i].quantity += 1;
                             if (!products[i].variation.includes(variation)) {
                                 // Change to new variation
                                 products[i].variation.push(variation);
                             }
+                            break;
                         } else {
                             // replace with new quantity
                             products[i].quantity = quantity;
@@ -53,16 +53,13 @@ export default class cartContoller {
                         }
                         break;
                     }
-                    if (count == i + 1 && products[i].product != productId) {
-                        console.log('in here', quantity);
-                        // Do something when cart exits and product is not in array of products
-                        console.log("product doesn't exist i have to push");
-                        products.push({
-                            product: productId,
-                            quantity: quantity,
-                            variation: variation.trim() !== '' ? variation : ''
-                        });
-                    }
+                }
+                if (count === 0) {
+                    products.push({
+                        product: productId,
+                        quantity,
+                        variation
+                    });
                 }
 
                 await Cart.updateOne(
