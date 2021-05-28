@@ -2,17 +2,19 @@ import { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST, NOT_FOUND, SERVER_ERROR, SUCCESS } from '../types/statusCode';
 import { getUserFromToken } from '../../utils';
 import Cart from '../models/cartModel';
-
+import Controlled from '../models/controlledProductModel';
+import { singleUpload } from '../../utils';
 interface IRequest {
     productId: string;
     quantity: number;
     variation: string;
+    prescription_image: string;
 }
 
 export default class cartContoller {
     static async addToCart(req: Request, res: Response, next: NextFunction) {
         try {
-            const { productId, quantity, variation }: IRequest = req.body;
+            const { productId, quantity, variation, prescription_image }: IRequest = req.body;
             const { _id } = await getUserFromToken(req);
             const cartItem = await Cart.findOne({ user: _id });
             if (!cartItem) {
@@ -70,6 +72,33 @@ export default class cartContoller {
                         }
                     }
                 );
+            }
+            if (prescription_image) {
+                const isExist = await Controlled.findOne({ user: _id, product: productId });
+                const image = await singleUpload({
+                    base64: prescription_image,
+                    id: productId,
+                    imageType: 'Controlled-products'
+                });
+                console.log(image);
+                if (isExist) {
+                    //do update
+                    await Controlled.updateOne(
+                        { _id: isExist._id },
+                        {
+                            $set: {
+                                photo: image
+                            }
+                        }
+                    );
+                } else {
+                    // do create
+                    await Controlled.create({
+                        photo: image,
+                        product: productId,
+                        user: _id
+                    });
+                }
             }
             const cart = await Cart.findOne({ user: _id });
             return res.status(SUCCESS).json({ cart });

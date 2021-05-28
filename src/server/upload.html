@@ -3,11 +3,23 @@
     <head></head>
     <body>
         <header></header>
-        <form method="post" enctype="multipart/form-data">
-            <input type="file" id="image" name="image" multiple />
-            <button type="button" id="submit" id="btn" class="btn">submit</button>
-        </form>
+        <div>
+            <p>Multiple file upload</p>
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" id="image" name="image" multiple />
+                <button type="button" id="submit" id="btn" class="btn">submit</button>
+            </form>
+        </div>
+
+        <div>
+            <p>Single file upload</p>
+            <form method="post" enctype="multipart/form-data">
+                <input type="file" id="photo" name="photo" />
+                <button type="button" id="submit" id="btn2" class="btn">submit</button>
+            </form>
+        </div>
         <script src="https://ajax.googleapis.com/ajax/libs/jquery/1.6.2/jquery.min.js"></script>
+
         <script>
             $(document).ready(function () {
                 function getBase64(file) {
@@ -48,6 +60,36 @@
                         category: 'drugs',
                         brand: 'iphone',
                         stock: 4
+                    };
+
+                    $.ajax({
+                        type: 'POST',
+                        url: url,
+                        dataType: 'json',
+                        data: JSON.stringify(data),
+                        contentType: 'application/json; charset=utf-8',
+                        success: function (response) {
+                            //if request if made successfully then the response represent the data
+                            console.log('SUCCESS', response);
+                        },
+                        error: function (err) {
+                            console.log(err.status);
+                        }
+                    });
+                });
+
+                /////////////////////////////////////////////////////
+                // single upload
+
+
+                $('.btn2').click(function () {
+                    console.log('got here to btn2');
+                    let
+                    const url = 'http://127.0.0.1:5000/api/v1/cart/add';
+                    var data = {
+                        productId: '60af8d7258828b0bf8ac57ed',
+                        quantity: 5,
+                        prescription_image: b64
                     };
 
                     $.ajax({

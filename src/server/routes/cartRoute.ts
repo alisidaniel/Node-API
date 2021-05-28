@@ -1,10 +1,10 @@
 import express from 'express';
 import cartContoller from '../controllers/cartController';
-import { variationExist, productExist } from '../middlewares/cartMiddleware';
+import { variationExist, productExist, isControlled } from '../middlewares/cartMiddleware';
 
 const router = express.Router();
 
-router.post('/add', [productExist, variationExist], cartContoller.addToCart);
+router.post('/add', [productExist, variationExist, isControlled], cartContoller.addToCart);
 
 router.put('/edit', [productExist, variationExist], cartContoller.updateCartItem);
 
