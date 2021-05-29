@@ -1,5 +1,6 @@
 import AWS from 'aws-sdk';
 import config from '../config/config';
+import { fileExtention, requiredExtentions } from './fileValidation';
 
 AWS.config.update({
     accessKeyId: config.aws.AWS_ACCESS_ID,
@@ -40,7 +41,8 @@ export const multipleUpload = async ({ base64Array, productId }: IPropImages) =>
                 // const buf = new Buffer.from(base64.replace(/^data:image\/\w+;base64,/, ""), 'base64');
                 // const type = base64.split(';')[0].split('/')[1];
                 const buf = Buffer.from(base64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-                const type = 'jpg';
+                const type = fileExtention(base64);
+                if (!requiredExtentions(type)) throw new Error('Image type not supported.');
                 const putParams = {
                     Bucket: config.aws.AWS_BUCKET,
                     Key: `${productId}/productImages/${timestamp}-midlmanImage.${type}`,
@@ -72,6 +74,7 @@ export const multipleUpload = async ({ base64Array, productId }: IPropImages) =>
                 throw new Error(errValues[0]);
             });
     } catch (e) {
+        console.log(e.message);
         throw new Error(e);
     }
 };
@@ -82,7 +85,8 @@ export const singleUpload = async ({ base64, id, imageType }: IPropImage) => {
         return new Promise((res, rej) => {
             // new Buffer.from(base64.replace(/^9j/, ''), 'base64')
             const buf = Buffer.from(base64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-            const type = 'jpg';
+            const type = fileExtention(base64);
+            if (!requiredExtentions(type)) throw new Error('Image type not supported.');
             const putParams = {
                 Bucket: config.aws.AWS_BUCKET,
                 Key: `${id}/${imageType}/${timestamp}.${type}`,

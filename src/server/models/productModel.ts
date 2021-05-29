@@ -48,7 +48,7 @@ const productModel = new Schema<IProduct>(
         },
         subcategory: {
             type: String,
-            required: true
+            required: false
         },
         brand: {
             type: String,

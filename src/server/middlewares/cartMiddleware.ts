@@ -37,14 +37,22 @@ export const variationExist = async (req: Request, res: Response, next: NextFunc
             }
         });
         if (count > 0 || variation.trim() === '') {
-            console.log('step 4', next);
             next;
         } else {
-            console.log('step 5');
             return res
                 .status(BAD_REQUEST)
                 .json({ message: 'Variation not found for this product.' });
         }
     }
     next();
+};
+
+export const isControlled = async (req: Request, res: Response, next: NextFunction) => {
+    const { productId, prescription_image } = req.body;
+    const product = await Product.findOne({ _id: productId });
+    if (product.controlled && !prescription_image) {
+        return res.status(BAD_REQUEST).json({ message: 'Please upload doctors prescription.' });
+    } else if (product.controlled && prescription_image) {
+        next();
+    }
 };
