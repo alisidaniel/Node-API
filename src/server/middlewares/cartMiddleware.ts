@@ -54,5 +54,7 @@ export const isControlled = async (req: Request, res: Response, next: NextFuncti
         return res.status(BAD_REQUEST).json({ message: 'Please upload doctors prescription.' });
     } else if (product.controlled && prescription_image) {
         next();
+    } else if (!product.controlled) {
+        next();
     }
 };

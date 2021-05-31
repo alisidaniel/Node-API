@@ -3,6 +3,7 @@ import { BAD_REQUEST, NOT_FOUND, SERVER_ERROR, SUCCESS } from '../types/statusCo
 import { getUserFromToken } from '../../utils';
 import Cart from '../models/cartModel';
 import Controlled from '../models/controlledProductModel';
+import Product from '../models/productModel';
 import { singleUpload } from '../../utils';
 interface IRequest {
     productId: string;
@@ -18,6 +19,7 @@ export default class cartContoller {
             const { _id } = await getUserFromToken(req);
             const cartItem = await Cart.findOne({ user: _id });
             if (!cartItem) {
+                console.log('saving....');
                 await Cart.create({
                     user: _id,
                     products: [
@@ -29,6 +31,7 @@ export default class cartContoller {
                     ]
                 });
             } else {
+                console.log('updating..');
                 let cartItem = await Cart.find({ user: _id });
                 let products = cartItem[0].products;
                 let count = 0;
@@ -73,7 +76,8 @@ export default class cartContoller {
                     }
                 );
             }
-            if (prescription_image) {
+            const product = await Product.findOne({ _id: productId });
+            if (product.controlled) {
                 const isExist = await Controlled.findOne({ user: _id, product: productId });
                 const image = await singleUpload({
                     base64: prescription_image,
