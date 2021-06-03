@@ -18,8 +18,10 @@ import productRouter from './server/routes/productRoute';
 import cartRouter from './server/routes/cartRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
-// import fbStrategy from './server/middlewares/facebookStrategy';
+import strategy from 'passport-facebook';
+// import config from './config/config'
 
+const FacebookStrategy = strategy.Strategy;
 const app: Application = express();
 
 //*  MIDDLEWARES */
@@ -29,7 +31,25 @@ app.use(cors(corsOptions));
 app.use(errorHandler);
 app.use(passport.initialize());
 app.use(passport.session());
-// app.use(fbStrategy);
+// app.use(
+//     new FacebookStrategy(
+//         {
+//             clientID: config.passport.fbId,
+//             clientSecret: config.auth.jwt,
+//             callbackURL: config.passport.callbackUrl,
+//             profileFields: ['id', 'displayName', 'name', 'gender', 'picture.type(large)', 'email'],
+//             passReqToCallback: true
+//         },
+//         async (accessToken: string, refreshToken: string, profile: any, cb: any) => {
+//              const { email, first_name, last_name } = profile._json;
+//              const userData = {
+//                  email,
+//                  firstName: first_name,
+//                  lastName: last_name
+//              }
+//         }
+//     )
+// );
 
 const baseRoute = '/api/v1';
 
