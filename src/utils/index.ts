@@ -3,7 +3,7 @@ import logger from './errorExecptionLogger';
 import corsOptions from './corsPermissions';
 import { hashPassword, validatePassword } from './hashPassword';
 import { userExist, adminExist } from './userExist';
-import { getUserFromToken, getUserFromDatabase } from './findUser';
+import { getUserFromToken, getUserFromDatabase, getCreator } from './findUser';
 import { createConfirmationUrl } from './createConfirmationUrl';
 import { sendEmail } from './sendMail';
 import { multipleUpload, singleUpload } from './fileUpload';
@@ -22,5 +22,6 @@ export {
     createConfirmationUrl,
     sendEmail,
     multipleUpload,
-    singleUpload
+    singleUpload,
+    getCreator
 };
