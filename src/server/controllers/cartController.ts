@@ -181,4 +181,14 @@ export default class cartContoller {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
+
+    static async getUserCart(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { _id } = await getUserFromToken(req);
+            const cart = await Cart.find({ user: _id });
+            return res.status(SUCCESS).json({ cart });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
 }

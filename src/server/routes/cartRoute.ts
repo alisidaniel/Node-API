@@ -4,6 +4,8 @@ import { variationExist, productExist, isControlled } from '../middlewares/cartM
 
 const router = express.Router();
 
+router.get('/', cartContoller.getUserCart);
+
 router.post('/add', [productExist, variationExist, isControlled], cartContoller.addToCart);
 
 router.put('/edit', [productExist, variationExist], cartContoller.updateCartItem);

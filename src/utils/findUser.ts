@@ -3,6 +3,8 @@ import jwt from 'jsonwebtoken';
 import { NO_USER } from '../server/types/messages';
 import User from '../server/models/userModel';
 import config from '../config/config';
+import { IRequest } from '../server/models/requestModel';
+import Admin from '../server/models/adminModel';
 
 export const getUserFromDatabase = async (email: string) => {
     try {
@@ -23,6 +25,23 @@ export const getUserFromToken = async (req: Request) => {
         const jwtPayload = await (<any>jwt.verify(token, config.auth.jwt));
         const { user } = jwtPayload;
         return user;
+    } catch (e) {
+        throw Error(e);
+    }
+};
+
+export const getCreator = async (req: Request): Promise<string> => {
+    try {
+        const creator = await getUserFromToken(req);
+        const user = await User.findById(creator._id);
+        if (user) {
+            // Do something
+            return 'user';
+        } else {
+            const admin = await Admin.findById(creator._id);
+            if (admin) return 'admin';
+            return '';
+        }
     } catch (e) {
         throw Error(e);
     }
