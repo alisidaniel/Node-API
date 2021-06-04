@@ -45,11 +45,11 @@ export default class orderController {
 
             if (type === 'Cart') {
                 // generate order
-                console.log(_id);
-                const cart = await Cart.findOne({ user: _id });
-                console.log(cart);
-                if (!cart) return res.status(BAD_REQUEST).json({ message: 'User cart not found.' });
-                cart.products.forEach(async (item: any) => {
+                const cartItem = await Cart.findOne({ users: _id });
+                console.log(cartItem);
+                if (!cartItem)
+                    return res.status(BAD_REQUEST).json({ message: 'User cart not found.' });
+                cartItem.products.forEach(async (item: any) => {
                     await Order.create({
                         user: _id,
                         product: item.product,

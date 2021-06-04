@@ -17,6 +17,7 @@ import categoryRouter from './server/routes/categoryRoute';
 import productRouter from './server/routes/productRoute';
 import cartRouter from './server/routes/cartRoute';
 import orderRouter from './server/routes/orderRoute';
+import disputeRouter from './server/routes/disputeRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
 // import fbStrategy from './server/middlewares/facebookStrategy';
@@ -41,6 +42,7 @@ app.use(`${baseRoute}/category`, categoryRouter);
 app.use(`${baseRoute}/product`, productRouter);
 app.use(`${baseRoute}/cart`, cartRouter);
 app.use(`${baseRoute}/order`, orderRouter);
+app.use(`${baseRoute}/dispute`, disputeRouter);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));

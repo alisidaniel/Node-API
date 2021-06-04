@@ -44,3 +44,4 @@
 {"message":"::1 - - [26/May/2021:23:55:39 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
 {"message":"::1 - - [27/May/2021:00:06:38 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
 {"message":"::1 - - [27/May/2021:00:10:18 +0000] \"POST /api/v1/cart/add HTTP/1.1\" 404 155 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
+{"message":"::1 - - [04/Jun/2021:09:08:06 +0000] \"POST /api/v1/dispute HTTP/1.1\" 404 154 \"-\" \"PostmanRuntime/7.28.0\"\n","level":"info","service":"error-service"}
