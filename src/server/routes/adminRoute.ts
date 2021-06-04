@@ -13,4 +13,6 @@ router.post('/auth/forgot/password', [adminAccountExist], adminController.sendPa
 
 router.post('/auth/change/password', [isAuthorized], adminController.changePassword);
 
+router.put('/update/:adminId', adminController.updateProfile);
+
 export default router;

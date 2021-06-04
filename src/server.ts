@@ -18,6 +18,10 @@ import productRouter from './server/routes/productRoute';
 import cartRouter from './server/routes/cartRoute';
 import orderRouter from './server/routes/orderRoute';
 import disputeRouter from './server/routes/disputeRoute';
+import couponRouter from './server/routes/couponRoute';
+import roleRouter from './server/routes/roleRoute';
+import brandRouter from './server/routes/brandRoute';
+import blogRouter from './server/routes/blogRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
 // import fbStrategy from './server/middlewares/facebookStrategy';
@@ -43,6 +47,10 @@ app.use(`${baseRoute}/product`, productRouter);
 app.use(`${baseRoute}/cart`, cartRouter);
 app.use(`${baseRoute}/order`, orderRouter);
 app.use(`${baseRoute}/dispute`, disputeRouter);
+app.use(`${baseRoute}/coupon`, couponRouter);
+app.use(`${baseRoute}/role`, roleRouter);
+app.use(`${baseRoute}/brand`, brandRouter);
+app.use(`${baseRoute}/blog`, blogRouter);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
