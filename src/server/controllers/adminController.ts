@@ -4,7 +4,12 @@ import { Request, Response, NextFunction } from 'express';
 import mailJob from '../jobs/email/emailJob';
 import { consumeEmailJob } from '../jobs/email/consumeJob';
 import Admin, { IAdmin } from '../models/adminModel';
-import { IN_VALID_LOGIN, NO_USER } from '../types/messages';
+import {
+    IN_VALID_LOGIN,
+    NO_USER,
+    UPDATE_SUCCESS,
+    NOT_FOUND as NOT_FOUND_M
+} from '../types/messages';
 import {
     BAD_REQUEST,
     FORBIDEN,
@@ -157,6 +162,18 @@ export default class adminController<IAuth> {
                 return res.status(SUCCESS).json({ message: 'Successfully updated password.' });
             }
             return res.status(FORBIDEN).json({ message: 'Old password incorrect' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async updateProfile(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { adminId } = req.params;
+            const response = await Admin.updateOne({ _id: adminId }, { $set: { ...req.body } });
+            if (response.nModified === 1)
+                return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
+            return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

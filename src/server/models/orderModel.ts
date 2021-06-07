@@ -1,14 +1,34 @@
-import { model, Schema } from 'mongoose';
+import { Document, model, Types, Schema } from 'mongoose';
 
-const orderModel = new Schema(
+export enum EStatus {
+    Pending = 'Pending',
+    Processing = 'Processing',
+    Return = 'Return',
+    Completed = 'Completed'
+}
+
+export enum EType {
+    Cart = 'Cart',
+    Checkout = 'Checkout'
+}
+
+export interface IOrder {
+    user: string;
+    type: EStatus;
+}
+
+interface OrderDocument extends IOrder, Document {}
+
+const orderModel = new Schema<OrderDocument>(
     {
         reference: {
             type: String,
-            required: true
+            required: false
         },
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            required: true
         },
         product: {
             type: Schema.Types.ObjectId,
@@ -16,14 +36,33 @@ const orderModel = new Schema(
         },
         quantity: {
             type: Number,
-            required: false
+            required: true
         },
         variation: {
-            type: Schema.Types.ObjectId,
-            default: null
+            type: [Schema.Types.ObjectId]
         },
         shipmentAddress: {
+            type: String,
+            required: true
+        },
+        productName: {
+            // required when it's a checkout Order
             type: String
+        },
+        unitPrice: {
+            // required when it's a checkout Order
+            type: Number,
+            required: false
+        },
+        type: {
+            type: String,
+            enum: Object.values(EType),
+            default: EType.Cart
+        },
+        status: {
+            type: String,
+            enum: Object.values(EStatus),
+            default: EStatus.Pending
         }
     },
     {

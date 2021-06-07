@@ -1,7 +1,7 @@
 import { NextFunction, Request, Response } from 'express';
 import { adminExist, userExist } from '../../utils';
 import { getUserFromDatabase, getUserFromToken } from '../../utils/findUser';
-import { IAdmin } from '../models/adminModel';
+import Admin, { IAdmin } from '../models/adminModel';
 import User, { EUserType, IUser } from '../models/userModel';
 import {
     ACCOUNT_INACTIVE,
@@ -97,6 +97,18 @@ export const userTypeData = async (req: Request, res: Response, next: NextFuncti
             }
             next();
         }
+        next();
+    } catch (e) {
+        return res.status(SERVER_ERROR).json({ message: e.message });
+    }
+};
+
+export const isAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { _id } = await getUserFromToken(req);
+        const adminExist = await Admin.findById(_id);
+        if (!adminExist)
+            return res.status(UNAUTHORIZED).json({ message: 'User must be an admin.' });
         next();
     } catch (e) {
         return res.status(SERVER_ERROR).json({ message: e.message });

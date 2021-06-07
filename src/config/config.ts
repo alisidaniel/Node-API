@@ -19,6 +19,11 @@ const AWS_ACCESS_ID: string = process.env.AWS_ACCESSID || 'AKIAZDSUDEPVBSDI5US5'
 const S3_BUCKET_NAME: string = process.env.S3_BUCKET_NAME || 'midlman';
 const S3_HOST_URL: string = process.env.S3_HOST_URL || 'https://midlman.s3.eu-west-3.amazonaws.com';
 const S3_REGION: string = process.env.S3_REGION || 'eu-west-3';
+const PAYSTACK_URL: string = process.env.PAYSTACK_URL || 'https://api.paystack.co';
+const PAYSTACK_SECRET_KEY: string =
+    process.env.PAYSTACK_SECRET_KEY || 'sk_test_14c14e0ceb2c7213be160b9a927f49158c58cea7';
+const PAYSTACK_PUBLIC_KEY: string =
+    process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_ad8e5e2d5142e9538618a7cb9acf5413b2b02dfc';
 
 const SERVER = {
     hostname: SERVER_HOST_NAME,
@@ -59,6 +64,12 @@ const AWS = {
     AWS_REGION: S3_REGION
 };
 
+const PAYSTACK = {
+    url: PAYSTACK_URL,
+    secret_key: PAYSTACK_SECRET_KEY,
+    public_key: PAYSTACK_PUBLIC_KEY
+};
+
 const config = {
     server: SERVER,
     mongo: MONGO,
@@ -67,7 +78,8 @@ const config = {
     node_env: NODE_ENV,
     redis: REDIS,
     passport: PASSPORT,
-    aws: AWS
+    aws: AWS,
+    paystack: PAYSTACK
     // others ...
 };
 

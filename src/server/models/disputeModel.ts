@@ -1,14 +1,27 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const disputeModel = new Schema(
+export enum EStatus {
+    Pending = 'Pending',
+    Open = 'Open',
+    Closed = 'Closed'
+}
+export interface IDesK {
+    subject: string;
+    message: string;
+}
+
+interface DisputeDocument extends IDesK, Document {}
+
+const disputeModel = new Schema<DisputeDocument>(
     {
         reference: {
             type: Number,
-            require: true
+            require: false
         },
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            required: true
         },
         subject: {
             type: String,
@@ -20,7 +33,8 @@ const disputeModel = new Schema(
         },
         status: {
             type: String,
-            enum: [0, 1, 2] // 0 - pending, 1 - opend, 2 - closed
+            enum: EStatus, // 0 - pending, 1 - opend, 2 - closed
+            default: EStatus.Pending
         }
     },
     {
