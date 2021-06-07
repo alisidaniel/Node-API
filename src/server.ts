@@ -29,7 +29,6 @@ const app: Application = express();
 app.use(express.urlencoded({ extended: false, limit: '50mb' }));
 app.use(express.json({ limit: '50mb' }));
 app.use(cors(corsOptions));
-app.use(errorHandler);
 app.use(passport.initialize());
 app.use(passport.session());
 // app.use(
@@ -61,6 +60,7 @@ app.use(`${baseRoute}/category`, categoryRouter);
 app.use(`${baseRoute}/product`, productRouter);
 app.use(`${baseRoute}/cart`, cartRouter);
 app.use(`${baseRoute}/order`, orderRouter);
+app.use(errorHandler);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
