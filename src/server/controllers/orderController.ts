@@ -6,6 +6,9 @@ import Order, { EType, EStatus as IStatus } from '../models/orderModel';
 import { getCreator, getUserFromToken } from '../../utils';
 import Cart from '../models/cartModel';
 import { NOT_FOUND } from '../types/messages';
+import Setting from '../models/settingsModel';
+import User from '../models/userModel';
+import { emailNotify } from '../../utils';
 
 interface IProducts {
     product: string;
@@ -186,10 +189,20 @@ export default class orderController implements IClass {
 
     public async approve(req: Request, res: Response, next: NextFunction) {
         try {
-            const { orderId } = req.params;
+            const { orderId, userId } = req.params;
             const response = await Order.updateOne(
                 { _id: orderId },
                 { $set: { status: IStatus.Completed } }
+            );
+
+            const user = await User.findOne({ _id: userId });
+            const email = user.email;
+            await emailNotify(
+                'Order Approved',
+                email,
+                userId,
+                'Your order have been approved.',
+                'OrderJob'
             );
             if (response.nModified === 1)
                 return res.status(SUCCESS).json({ message: 'Order approved.' });
@@ -201,6 +214,65 @@ export default class orderController implements IClass {
 
     public async reject(req: Request, res: Response, next: NextFunction) {
         try {
+            const setting = await Setting.find();
+            const { orderId, userId } = req.params;
+            if (setting) {
+                const user = await User.findOne({ _id: userId });
+                const email = user.email;
+                if (!user)
+                    return res.status(BAD_REQUEST).json({ message: 'Please provide a user ref' });
+                if (setting[0].autoRefund) {
+                    // Automatic Refund
+                    // Paystack refund
+                    await emailNotify(
+                        'Order Rejected',
+                        email,
+                        userId,
+                        'Your order have been rejected.',
+                        'OrderJob'
+                    );
+                    const response = await Order.updateOne(
+                        { _id: orderId },
+                        {
+                            $set: {
+                                status: IStatus.Return
+                            }
+                        }
+                    );
+                    if (response.nModified === 1)
+                        return res
+                            .status(SUCCESS)
+                            .json({ message: 'Order rejected fund returned have been disbused.' });
+                    return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+                } else {
+                    // Dispatch email
+                    await emailNotify(
+                        'Order Rejected',
+                        email,
+                        userId,
+                        'Your order have been rejected.',
+                        'OrderJob'
+                    );
+                    // Manual refund
+                    const response = await Order.updateOne(
+                        { _id: orderId },
+                        {
+                            $set: {
+                                status: IStatus.Return
+                            }
+                        }
+                    );
+                    if (response.nModified === 1)
+                        return res
+                            .status(SUCCESS)
+                            .json({ message: 'Order rejected please return fund manually.' });
+                    return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+                }
+            } else {
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Admin settings not found, Create Setting And Try again.' });
+            }
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

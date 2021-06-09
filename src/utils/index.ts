@@ -8,9 +8,11 @@ import { createConfirmationUrl } from './createConfirmationUrl';
 import { sendEmail } from './sendMail';
 import { multipleUpload, singleUpload } from './fileUpload';
 import { generateRef } from './generateRef';
+import { emailNotify } from './emailNotification';
 
 export {
     //
+    emailNotify,
     errorRequest,
     logger,
     corsOptions,

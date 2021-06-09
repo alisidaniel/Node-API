@@ -35,6 +35,7 @@ interface UserDocument extends IUser, Document {
     address: Types.Map<string>;
     health_description: Types.Map<string>;
     fullName: string;
+    findOneOrCreate: any;
 }
 
 const userModel = new Schema<UserDocument>(
@@ -126,12 +127,33 @@ const userModel = new Schema<UserDocument>(
             type: Map,
             of: String,
             required: false
+        },
+
+        // Oauths
+        facebookId: {
+            type: String,
+            required: false
+        },
+        googleId: {
+            type: String,
+            required: false
         }
     },
     {
         timestamps: true
     }
 );
+
+userModel.statics.findOneOrCreate = function findOneOrCreate(condition, doc, callback) {
+    const self = this;
+    self.findOne(condition, (err: any, result: any) => {
+        return result
+            ? callback(err, result)
+            : self.create(doc, (err, result) => {
+                  return callback(err, result);
+              });
+    });
+};
 
 // VIRTUALS *//
 userModel.virtual('fullName').get(function (this: UserDocument) {

@@ -1,5 +1,6 @@
 import express from 'express';
 import orderController from '../controllers/orderController';
+import { isAdmin } from '../middlewares/authMiddleware';
 
 const router = express.Router();
 
@@ -17,8 +18,8 @@ router.get('/user/orders', controller.getUserOrders);
 
 router.post('/processing/:orderId', controller.processing);
 
-router.post('/approve/:orderId', controller.approve);
+router.post('/approve/:orderId/:userId', controller.approve);
 
-router.post('/reject/:orderId', controller.reject);
+router.post('/reject/:orderId/:userId', controller.reject);
 
 export default router;
