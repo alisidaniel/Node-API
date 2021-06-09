@@ -32,6 +32,8 @@ export default class orderController {
                 type
             }: IOrder = req.body;
             const { _id } = await getUserFromToken(req);
+            const cartItem = await Cart.find();
+            console.log(cartItem);
             if (type.trim() === '' || !Object.values(EType).includes(type as EType))
                 return res
                     .status(BAD_REQUEST)
@@ -43,13 +45,13 @@ export default class orderController {
                     .status(BAD_REQUEST)
                     .json({ message: 'Payment was unsuccessful, please try again.' });
 
-            if (type === 'Cart') {
+            if (type === EType.Cart) {
                 // generate order
-                console.log(_id);
-                const cart = await Cart.findOne({ user: _id });
-                console.log(cart);
-                if (!cart) return res.status(BAD_REQUEST).json({ message: 'User cart not found.' });
-                cart.products.forEach(async (item: any) => {
+                const cartItem = await Cart.findOne({ user: _id });
+                console.log(cartItem);
+                if (!cartItem)
+                    return res.status(BAD_REQUEST).json({ message: 'User cart not found.' });
+                cartItem.products.forEach(async (item: any) => {
                     await Order.create({
                         user: _id,
                         product: item.product,
@@ -61,7 +63,7 @@ export default class orderController {
                 // Clear user cart
                 await Cart.updateOne({ user: _id }, { $set: { products: [] } });
                 return res.status(SUCCESS).json({ message: 'Order created successfully' });
-            } else if (type === 'Checkout') {
+            } else if (type === EType.Checkout) {
                 // do something order
                 if (products) {
                     // check if requestId is valid

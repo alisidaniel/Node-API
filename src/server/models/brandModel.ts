@@ -1,6 +1,13 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const brandModel = new Schema(
+export interface IBrand {
+    name: string;
+    logo?: string;
+}
+
+interface BrandDocument extends IBrand, Document {}
+
+const brandModel = new Schema<BrandDocument>(
     {
         name: {
             type: String,

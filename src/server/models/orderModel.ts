@@ -45,6 +45,7 @@ const orderModel = new Schema<OrderDocument>(
             required: true
         },
         productName: {
+            // required when it's a checkout Order
             type: String
         },
         unitPrice: {

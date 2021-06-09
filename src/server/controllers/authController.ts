@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import passport from 'passport-facebook';
+import passport from 'passport';
 import config from '../../config/config';
 import {
     getUserFromDatabase,
@@ -88,7 +88,14 @@ export default class AuthController<IAuth> {
 
     static async facebook(req: Request, res: Response, next: NextFunction) {
         try {
-            // passport.authenticate('facebook');
+            passport.authenticate('facebook', { session: false });
+            async (req: Request, res: Response, next: NextFunction) => {
+                const user = req;
+                res.json({
+                    message: 'Signup with facebook successful',
+                    user
+                });
+            };
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

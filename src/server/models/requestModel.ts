@@ -15,7 +15,7 @@ interface IProducts {
 
 export interface IRequest {
     userId: string;
-    products: IProducts[];
+    products?: IProducts[];
     creator: string;
 }
 

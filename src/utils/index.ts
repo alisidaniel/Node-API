@@ -7,6 +7,7 @@ import { getUserFromToken, getUserFromDatabase, getCreator } from './findUser';
 import { createConfirmationUrl } from './createConfirmationUrl';
 import { sendEmail } from './sendMail';
 import { multipleUpload, singleUpload } from './fileUpload';
+import { generateRef } from './generateRef';
 
 export {
     //
@@ -23,5 +24,6 @@ export {
     sendEmail,
     multipleUpload,
     singleUpload,
-    getCreator
+    getCreator,
+    generateRef
 };

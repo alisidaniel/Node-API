@@ -11,7 +11,7 @@ const router = express.Router();
 
 router.post('/login', AuthController.login);
 
-router.post('facebook', AuthController.facebook);
+router.post('/facebook', AuthController.facebook);
 
 router.post('/register', [userAccountExist, userTypeData], AuthController.register);
 

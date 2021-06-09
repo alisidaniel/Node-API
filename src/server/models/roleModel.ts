@@ -1,6 +1,12 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const roleModel = new Schema(
+export interface IRoles {
+    name: string;
+}
+
+interface RoleDocument extends IRoles, Document {}
+
+const roleModel = new Schema<RoleDocument>(
     {
         name: {
             type: String,
