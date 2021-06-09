@@ -2,9 +2,10 @@ import { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST, SERVER_ERROR, SUCCESS } from '../types/statusCode';
 import paystackService from '../../utils/paystack';
 import orderRequest, { IRequest, EStatus } from '../models/requestModel';
-import Order, { EType } from '../models/orderModel';
+import Order, { EType, EStatus as IStatus } from '../models/orderModel';
 import { getCreator, getUserFromToken } from '../../utils';
-import Cart from '../models/cardModel';
+import Cart from '../models/cartModel';
+import { NOT_FOUND } from '../types/messages';
 
 interface IProducts {
     product: string;
@@ -21,8 +22,19 @@ interface IOrder {
     type: string;
 }
 
-export default class orderController {
-    static async order(req: Request, res: Response, next: NextFunction) {
+interface IClass {
+    getQuery(req: Request, res: Response, next: NextFunction): any;
+    getAllQuery(req: Request, res: Response, next: NextFunction): any;
+    getUserOrders(req: Request, res: Response, next: NextFunction): any;
+    order(req: Request, res: Response, next: NextFunction): any;
+    orderRequest(req: Request, res: Response, next: NextFunction): any;
+    processing(req: Request, res: Response, next: NextFunction): any;
+    reject(req: Request, res: Response, next: NextFunction): any;
+    approve(req: Request, res: Response, next: NextFunction): any;
+}
+
+export default class orderController implements IClass {
+    public async order(req: Request, res: Response, next: NextFunction) {
         try {
             const {
                 products,
@@ -32,12 +44,15 @@ export default class orderController {
                 type
             }: IOrder = req.body;
             const { _id } = await getUserFromToken(req);
-            const cartItem = await Cart.find();
-            console.log(cartItem);
             if (type.trim() === '' || !Object.values(EType).includes(type as EType))
                 return res
                     .status(BAD_REQUEST)
                     .json({ message: 'Field (Type) must be Cart or Checkout' });
+
+            if (!shipmentAddress || shipmentAddress.trim() === '')
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Field (shipmentAddress) must be provided.' });
             // verify transaction
             const response = await paystackService.verifyTransaction(transactionRef);
             if (!response)
@@ -48,9 +63,10 @@ export default class orderController {
             if (type === EType.Cart) {
                 // generate order
                 const cartItem = await Cart.findOne({ user: _id });
-                console.log(cartItem);
                 if (!cartItem)
                     return res.status(BAD_REQUEST).json({ message: 'User cart not found.' });
+                if (cartItem.products.length === 0)
+                    return res.status(BAD_REQUEST).json({ message: 'Cart is empty.' });
                 cartItem.products.forEach(async (item: any) => {
                     await Order.create({
                         user: _id,
@@ -70,11 +86,14 @@ export default class orderController {
                     const response = await orderRequest.findById(orderRequestId);
                     if (!response)
                         return res.status(BAD_REQUEST).json({ message: 'Invalid order(id).' });
+
                     products.forEach(async (item: any) => {
                         await Order.create({
+                            user: req.body.userId,
                             productName: item.productName,
-                            unitPrice: item.unitPrice,
+                            unitPrice: item.amount,
                             quantity: item.quantity,
+                            shipmentAddress,
                             type: EType.Checkout
                         });
                     });
@@ -100,7 +119,7 @@ export default class orderController {
         }
     }
 
-    static async orderRequest(req: Request, res: Response, next: NextFunction) {
+    public async orderRequest(req: Request, res: Response, next: NextFunction) {
         try {
             const { userId, products }: IRequest = req.body;
             const userType = await getCreator(req);
@@ -110,11 +129,78 @@ export default class orderController {
                 const response = await orderRequest.create({
                     user: userId,
                     products,
-                    status: userType === 'admin' ? 'Approved' : 'Pending'
+                    status: userType === 'admin' ? EStatus.Approved : EStatus.Pending
                 });
                 return res.status(SUCCESS).json({ response });
             }
             return res.status(BAD_REQUEST).json({ message: 'Field (products) can not be null.' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async getQuery(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { orderId } = req.params;
+            const response = await Order.findById(orderId);
+            if (!response) return res.status(BAD_REQUEST).json({ message: NOT_FOUND });
+            return res.status(SUCCESS).json({ response });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async getAllQuery(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await Order.find();
+            return res.status(SUCCESS).json({ response });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async getUserOrders(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { _id } = await getUserFromToken(req);
+            const response = await Order.find({ user: _id });
+            return res.status(SUCCESS).json({ response });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async processing(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { orderId } = req.params;
+            const response = await Order.updateOne(
+                { _id: orderId },
+                { $set: { status: IStatus.Processing } }
+            );
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: 'Dispatched Order' });
+            return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async approve(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { orderId } = req.params;
+            const response = await Order.updateOne(
+                { _id: orderId },
+                { $set: { status: IStatus.Completed } }
+            );
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: 'Order approved.' });
+            return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async reject(req: Request, res: Response, next: NextFunction) {
+        try {
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

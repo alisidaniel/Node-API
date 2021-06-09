@@ -1,6 +1,6 @@
 import { Document, model, Types, Schema } from 'mongoose';
 
-enum EStatus {
+export enum EStatus {
     Pending = 'Pending',
     Processing = 'Processing',
     Return = 'Return',
@@ -27,7 +27,8 @@ const orderModel = new Schema<OrderDocument>(
         },
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            required: true
         },
         product: {
             type: Schema.Types.ObjectId,
@@ -35,7 +36,7 @@ const orderModel = new Schema<OrderDocument>(
         },
         quantity: {
             type: Number,
-            required: false
+            required: true
         },
         variation: {
             type: [Schema.Types.ObjectId]
