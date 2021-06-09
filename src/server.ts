@@ -22,6 +22,7 @@ import couponRouter from './server/routes/couponRoute';
 import roleRouter from './server/routes/roleRoute';
 import brandRouter from './server/routes/brandRoute';
 import blogRouter from './server/routes/blogRoute';
+import setttingRouter from './server/routes/settingRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
 // import fbStrategy from './server/middlewares/facebookStrategy';
@@ -51,6 +52,7 @@ app.use(`${baseRoute}/coupon`, couponRouter);
 app.use(`${baseRoute}/role`, roleRouter);
 app.use(`${baseRoute}/brand`, brandRouter);
 app.use(`${baseRoute}/blog`, blogRouter);
+app.use(`${baseRoute}/setting`, setttingRouter);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));
