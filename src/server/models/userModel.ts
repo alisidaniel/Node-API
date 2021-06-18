@@ -1,13 +1,13 @@
 import { Document, model, Types, Schema } from 'mongoose';
 import { hashPassword } from '../../utils';
 export enum EUserType {
-    Express = 0,
-    Portal = 1
+    Express = 'Express',
+    Portal = 'Express'
 }
 enum EGender {
-    Male = 0,
-    Female = 1,
-    Other = 2
+    Male = 'Male',
+    Female = 'Female',
+    Other = 'Other'
 }
 
 export interface IUser {
@@ -72,7 +72,7 @@ const userModel = new Schema<UserDocument>(
         },
         password: {
             type: String,
-            required: true,
+            required: false,
             min: 6,
             max: 225
         },
@@ -127,16 +127,6 @@ const userModel = new Schema<UserDocument>(
             type: Map,
             of: String,
             required: false
-        },
-
-        // Oauths
-        facebookId: {
-            type: String,
-            required: false
-        },
-        googleId: {
-            type: String,
-            required: false
         }
     },
     {
@@ -162,7 +152,7 @@ userModel.virtual('fullName').get(function (this: UserDocument) {
 
 //* METHODS *//
 userModel.methods.getUserType = function (this: UserDocument) {
-    return this.userType == 0 ? 'Express' : 'Portal';
+    return this.userType == 'Express' ? 'Express' : 'Portal';
 };
 
 //* MIDDLEWARE *//
