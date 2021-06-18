@@ -15,7 +15,6 @@ export default class paystackService {
                 `${config.paystack.url}/transaction/verify/${reference}`,
                 options
             );
-
             if (response.data.data.status === 'success') {
                 return true;
             }
@@ -24,6 +23,27 @@ export default class paystackService {
             throw new Error(e);
         }
     }
+
+    static async getTransaction(reference: string) {
+        try {
+            const options = {
+                headers: {
+                    'Content-Type': 'application/json',
+                    Authorization: `Bearer ${config.paystack.secret_key}`
+                }
+            };
+
+            const response = await axios.get(
+                `${config.paystack.url}/transaction/verify/${reference}`,
+                options
+            );
+
+            return response.data;
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
+
     static async transferFund() {
         try {
         } catch (e) {

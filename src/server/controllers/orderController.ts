@@ -1,6 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST, SERVER_ERROR, SUCCESS } from '../types/statusCode';
-import paystackService from '../../utils/paystack';
 import orderRequest, { IRequest, EStatus } from '../models/requestModel';
 import Order, { EType, EStatus as IStatus } from '../models/orderModel';
 import { getCreator, getUserFromToken } from '../../utils';
@@ -8,6 +7,7 @@ import Cart from '../models/cartModel';
 import { NOT_FOUND } from '../types/messages';
 import Setting from '../models/settingsModel';
 import User from '../models/userModel';
+import Coupon, { ICoupon } from '../models/couponModel';
 import { emailNotify } from '../../utils';
 
 interface IProducts {
@@ -23,6 +23,7 @@ interface IOrder {
     transactionRef: string;
     shipmentAddress: string;
     type: string;
+    couponId: string;
 }
 
 interface IClass {
@@ -36,16 +37,11 @@ interface IClass {
     approve(req: Request, res: Response, next: NextFunction): any;
 }
 
+const entries: number = 1;
 export default class orderController implements IClass {
     public async order(req: Request, res: Response, next: NextFunction) {
         try {
-            const {
-                products,
-                orderRequestId,
-                transactionRef,
-                shipmentAddress,
-                type
-            }: IOrder = req.body;
+            const { products, orderRequestId, shipmentAddress, type, couponId }: IOrder = req.body;
             const { _id } = await getUserFromToken(req);
             if (type.trim() === '' || !Object.values(EType).includes(type as EType))
                 return res
@@ -56,12 +52,6 @@ export default class orderController implements IClass {
                 return res
                     .status(BAD_REQUEST)
                     .json({ message: 'Field (shipmentAddress) must be provided.' });
-            // verify transaction
-            const response = await paystackService.verifyTransaction(transactionRef);
-            if (!response)
-                return res
-                    .status(BAD_REQUEST)
-                    .json({ message: 'Payment was unsuccessful, please try again.' });
 
             if (type === EType.Cart) {
                 // generate order
@@ -81,39 +71,53 @@ export default class orderController implements IClass {
                 });
                 // Clear user cart
                 await Cart.updateOne({ user: _id }, { $set: { products: [] } });
+                if (couponId.trim() !== '') {
+                    await Coupon.updateOne(
+                        { _id: couponId },
+                        {
+                            $push: { user: _id }
+                            // $inc: { entries: 1 }
+                        }
+                    );
+                }
                 return res.status(SUCCESS).json({ message: 'Order created successfully' });
             } else if (type === EType.Checkout) {
                 // do something order
-                if (products) {
-                    // check if requestId is valid
-                    const response = await orderRequest.findById(orderRequestId);
-                    if (!response)
-                        return res.status(BAD_REQUEST).json({ message: 'Invalid order(id).' });
+                // check if requestId is valid
+                const response = await orderRequest.findById(orderRequestId);
+                if (!response)
+                    return res.status(BAD_REQUEST).json({ message: 'Invalid order(id).' });
 
-                    products.forEach(async (item: any) => {
-                        await Order.create({
-                            user: req.body.userId,
-                            productName: item.productName,
-                            unitPrice: item.amount,
-                            quantity: item.quantity,
-                            shipmentAddress,
-                            type: EType.Checkout
-                        });
+                response.products.forEach(async (item: any) => {
+                    await Order.create({
+                        user: _id,
+                        productName: item.productName,
+                        unitPrice: item.amount,
+                        quantity: item.quantity,
+                        shipmentAddress,
+                        type: EType.Checkout
                     });
-                    // update request that has been ordered.
-                    await orderRequest.updateOne(
-                        { _id: orderRequestId },
+                });
+                // update request that has been ordered.
+                await orderRequest.updateOne(
+                    { _id: orderRequestId },
+                    {
+                        $set: {
+                            status: EStatus.Completed
+                        }
+                    }
+                );
+
+                if (couponId.trim() !== '') {
+                    await Coupon.updateOne(
+                        { _id: couponId },
                         {
-                            $set: {
-                                status: EStatus.Completed
-                            }
+                            $push: { user: _id }
+                            // $inc: { entries: 1 }
                         }
                     );
-                    return res.status(SUCCESS).json({ message: 'Order created successfully' });
                 }
-                return res
-                    .status(BAD_REQUEST)
-                    .json({ message: 'Field (products) can not be null.' });
+                return res.status(SUCCESS).json({ message: 'Order created successfully' });
             } else {
                 return res.status(BAD_REQUEST).json({ message: 'Error occured' });
             }

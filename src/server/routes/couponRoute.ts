@@ -1,10 +1,13 @@
 import express from 'express';
 import couponController from '../controllers/couponController';
 import { isAdmin } from '../middlewares/authMiddleware';
+import { couponValidate } from '../middlewares/couponMiddleware';
 
 const router = express.Router();
 
 const controller = new couponController();
+
+router.get('/:userId/:couponId/:amount', [couponValidate], controller.applyCoupon);
 
 router.get('/', [isAdmin], controller.getAll);
 

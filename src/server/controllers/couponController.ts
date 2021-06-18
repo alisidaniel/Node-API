@@ -5,6 +5,7 @@ import { generateRef } from '../../utils';
 import { UPDATE_SUCCESS, NOT_FOUND as NOT_FOUND_M, DELETED_SUCCESS } from '../types/messages';
 
 interface IClass {
+    applyCoupon(req: Request, res: Response, next: NextFunction): any;
     create(req: Request, res: Response, next: NextFunction): any;
     edit(req: Request, res: Response, next: NextFunction): any;
     getAll(req: Request, res: Response, next: NextFunction): any;
@@ -13,9 +14,22 @@ interface IClass {
 }
 
 export default class couponController implements IClass {
+    public async applyCoupon(req: Request, res: Response, next: NextFunction): Promise<any> {
+        try {
+            const { userId, couponId } = req.params;
+            if (couponId.trim() === '' || userId.trim() === '' || req.params.amount.trim() === '')
+                return res.status(BAD_REQUEST).json({ message: 'Field(s) request can be empty' });
+            const response = await Coupon.findById(couponId);
+            const newPrice: number = parseInt(req.params.amount) - response.discount;
+            return res.status(SUCCESS).json({ newPrice });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
     public async create(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-            const { type, discount, expiryTime }: ICoupon = req.body;
+            const { type, discount, expiryTime, userId }: ICoupon = req.body;
             const code = generateRef(15);
             const response = await Coupon.create({
                 code: `midlman${code}`,
@@ -30,10 +44,10 @@ export default class couponController implements IClass {
     }
     public async edit(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-            const { type, discount, expiryTime }: ICoupon = req.body;
+            const { type, discount, expiryTime, status }: ICoupon = req.body;
             const { couponId } = req.params;
             const response = await Coupon.findByIdAndUpdate(couponId, {
-                $set: { type, discount, expiryTime }
+                $set: { type, discount, expiryTime, status }
             });
             if (!response) return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
             return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
