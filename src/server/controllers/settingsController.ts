@@ -14,14 +14,14 @@ interface IClass {
 export default class settingsController implements IClass {
     public async create(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-            const { autoRefund }: ISetting = req.body;
+            const { ...rest }: ISetting = req.body;
             const exist = await Setting.find();
             if (exist.length > 0)
                 return res
                     .status(BAD_REQUEST)
                     .json({ message: 'You can not have two settings. Try update.' });
             const response = await Setting.create({
-                autoRefund
+                ...rest
             });
             return res.status(SUCCESS).json({ response });
         } catch (e) {

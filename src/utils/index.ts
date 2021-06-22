@@ -9,6 +9,8 @@ import { sendEmail } from './sendMail';
 import { multipleUpload, singleUpload } from './fileUpload';
 import { generateRef } from './generateRef';
 import { emailNotify } from './emailNotification';
+import paystackService from './paystack';
+import financeLoger from './financialHandler';
 
 export {
     //
@@ -27,5 +29,7 @@ export {
     multipleUpload,
     singleUpload,
     getCreator,
-    generateRef
+    generateRef,
+    paystackService,
+    financeLoger
 };

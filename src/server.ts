@@ -24,6 +24,9 @@ import roleRouter from './server/routes/roleRoute';
 import brandRouter from './server/routes/brandRoute';
 import blogRouter from './server/routes/blogRoute';
 import setttingRouter from './server/routes/settingRoute';
+import cardRouter from './server/routes/cardRoute';
+import bankRouter from './server/routes/bankRoute';
+import walletRouter from './server/routes/walletRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
 import strategy from 'passport-facebook';
@@ -55,6 +58,9 @@ app.use(`${baseRoute}/role`, roleRouter);
 app.use(`${baseRoute}/brand`, brandRouter);
 app.use(`${baseRoute}/blog`, blogRouter);
 app.use(`${baseRoute}/setting`, setttingRouter);
+app.use(`${baseRoute}/bank`, bankRouter);
+app.use(`${baseRoute}/card`, cardRouter);
+app.use(`${baseRoute}/wallet`, walletRouter);
 
 passport.use(`${baseRoute}/auth/facebook`, facebookStrategy);
 
