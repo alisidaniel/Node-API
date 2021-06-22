@@ -67,16 +67,16 @@ export default class walletController implements IClass {
 
     public async editWithdraw(req: Request, res: Response, next: NextFunction) {
         try {
-            const { widthdrawId } = req.params;
+            const { withdrawId } = req.params;
             const { ...rest }: IWithdraw = req.body;
-            const response = await Withdraw.findOne({ _id: widthdrawId });
+            const response = await Withdraw.findOne({ _id: withdrawId });
             if (!response) return res.status(NOT_FOUND).json({ message: 'Not found' });
             if (response.status !== IStatus.Pending)
                 return res.status(BAD_REQUEST).json({
                     message: 'Withdraw has left pending state. Therefore can not be updated.'
                 });
             const responseData = await Withdraw.updateOne(
-                { _id: widthdrawId },
+                { _id: withdrawId },
                 { $set: { ...rest } }
             );
             if (responseData.nModified === 1)
