@@ -20,6 +20,11 @@ interface IToken {
     otp: string;
 }
 
+interface IResolver {
+    account_number: string;
+    bank_code: string;
+}
+
 const options = {
     headers: {
         'Content-Type': 'application/json',
@@ -44,18 +49,21 @@ export default class paystackService {
 
     static async getTransaction(reference: string) {
         try {
-            const options = {
-                headers: {
-                    'Content-Type': 'application/json',
-                    Authorization: `Bearer ${config.paystack.secret_key}`
-                }
-            };
-
             const response = await axios.get(
                 `${config.paystack.url}/transaction/verify/${reference}`,
                 options
             );
+            return response.data;
+        } catch (e) {
+            throw new Error(e);
+        }
+    }
 
+    static async accountResolver(data: IResolver) {
+        try {
+            const response = await axios.get(
+                `${config.paystack.url}/bank/resolve?${data.account_number}&${data.bank_code}`
+            );
             return response.data;
         } catch (e) {
             throw new Error(e);
