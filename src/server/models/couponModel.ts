@@ -6,7 +6,7 @@ export interface ICoupon {
     discount: string;
     expiryTime: Date;
     status: boolean;
-    entries: any | undefined;
+    entries: any;
 }
 
 interface CouponDocument extends ICoupon, Document {}
@@ -19,6 +19,7 @@ const couponModel = new Schema<CouponDocument>(
         },
         user: {
             type: [Schema.Types.ObjectId],
+            default: [],
             required: true
         },
         type: {

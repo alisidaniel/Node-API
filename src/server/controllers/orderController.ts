@@ -9,7 +9,7 @@ import Setting from '../models/settingsModel';
 import User from '../models/userModel';
 import Coupon, { ICoupon } from '../models/couponModel';
 import { emailNotify } from '../../utils';
-
+import mongoose from 'mongoose';
 interface IProducts {
     product: string;
     quantity: number;
@@ -37,7 +37,6 @@ interface IClass {
     approve(req: Request, res: Response, next: NextFunction): any;
 }
 
-const entries: number = 1;
 export default class orderController implements IClass {
     public async order(req: Request, res: Response, next: NextFunction) {
         try {
@@ -72,13 +71,13 @@ export default class orderController implements IClass {
                 // Clear user cart
                 await Cart.updateOne({ user: _id }, { $set: { products: [] } });
                 if (couponId.trim() !== '') {
-                    await Coupon.updateOne(
-                        { _id: couponId },
-                        {
-                            $push: { user: _id }
-                            // $inc: { entries: 1 }
-                        }
-                    );
+                    await Coupon.findOne({ _id: couponId }, function (err: any, doc: any) {
+                        let userKey: [any] = [_id];
+                        const newUsers = userKey.concat(doc.user);
+                        doc.user = newUsers;
+                        doc.entries = doc.entries + 1;
+                        doc.save();
+                    });
                 }
                 return res.status(SUCCESS).json({ message: 'Order created successfully' });
             } else if (type === EType.Checkout) {
@@ -109,13 +108,13 @@ export default class orderController implements IClass {
                 );
 
                 if (couponId.trim() !== '') {
-                    await Coupon.updateOne(
-                        { _id: couponId },
-                        {
-                            $push: { user: _id }
-                            // $inc: { entries: 1 }
-                        }
-                    );
+                    await Coupon.findOne({ _id: couponId }, function (err: any, doc: any) {
+                        let userKey: [any] = [_id];
+                        const newUsers = userKey.concat(doc.user);
+                        doc.user = newUsers;
+                        doc.entries = doc.entries + 1;
+                        doc.save();
+                    });
                 }
                 return res.status(SUCCESS).json({ message: 'Order created successfully' });
             } else {
