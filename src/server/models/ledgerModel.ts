@@ -1,6 +1,11 @@
 import { model, Schema } from 'mongoose';
 
-const transactionEnums = ['001', '002'];
+const transactionEnums = ['001', '002', '003', '004'];
+
+export enum directionType {
+    Debit = 'Debit',
+    Credit = 'Credit'
+}
 
 const ledgerModel = new Schema(
     {
@@ -20,11 +25,6 @@ const ledgerModel = new Schema(
             type: Number,
             required: true
         },
-        transactionType: {
-            //  0 specify debit, 1 - specifies credit
-            type: Number,
-            enum: [0, 1]
-        },
         description: {
             type: String,
             required: true
@@ -39,6 +39,11 @@ const ledgerModel = new Schema(
             type: String,
             required: true,
             enum: transactionEnums
+        },
+        direction: {
+            type: String,
+            enum: [directionType],
+            required: true
         }
     },
     {

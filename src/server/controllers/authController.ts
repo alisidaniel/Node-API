@@ -1,25 +1,26 @@
-import { Request, Response, NextFunction } from 'express';
+import { NextFunction, Request, Response } from 'express';
 import jwt from 'jsonwebtoken';
-import User, { IUser, EUserType } from './../models/userModel';
+import passport from 'passport';
+import config from '../../config/config';
+import {
+    getUserFromDatabase,
+    getUserFromToken,
+    hashPassword,
+    userExist,
+    validatePassword
+} from '../../utils';
+import { consumeEmailJob } from '../jobs/email/consumeJob';
+import mailJob from '../jobs/email/emailJob';
 import { IN_VALID_LOGIN, NO_USER } from '../types/messages';
 import {
     BAD_REQUEST,
+    FORBIDEN,
     NOT_FOUND,
     SERVER_ERROR,
     SUCCESS,
-    UNAUTHORIZED,
-    FORBIDEN
+    UNAUTHORIZED
 } from '../types/statusCode';
-import config from '../../config/config';
-import {
-    validatePassword,
-    userExist,
-    getUserFromDatabase,
-    getUserFromToken,
-    hashPassword
-} from '../../utils';
-import mailJob from '../jobs/email/emailJob';
-import { consumeEmailJob } from '../jobs/email/consumeJob';
+import User, { IUser } from './../models/userModel';
 
 interface IAuth<T> {
     login: () => T;
@@ -80,6 +81,21 @@ export default class AuthController<IAuth> {
                 return res.status(SUCCESS).json({ token, user });
             }
             return res.status(NOT_FOUND).json({ message: NO_USER });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async facebook(req: Request, res: Response, next: NextFunction) {
+        try {
+            passport.authenticate('facebook', { session: false });
+            async (req: Request, res: Response, next: NextFunction) => {
+                const user = req;
+                res.json({
+                    message: 'Signup with facebook successful',
+                    user
+                });
+            };
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

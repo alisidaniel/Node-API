@@ -40,8 +40,12 @@ export const mailHTML = (url: string, type: string, title: string) => {
       }
     </style>
     <h1>${title}</h1>
-    <p>Kindly click the button below to procceed</p>
-    <a href="${url}">${type}</a>
+    ${
+        url.trim() === ''
+            ? ''
+            : `<div><p>Kindly click the button below to procceed</p>
+      <a href="${url}">${type}</a> </div>`
+    }
     </div>
     `;
 };

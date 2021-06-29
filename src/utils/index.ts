@@ -8,9 +8,13 @@ import { createConfirmationUrl } from './createConfirmationUrl';
 import { sendEmail } from './sendMail';
 import { multipleUpload, singleUpload } from './fileUpload';
 import { generateRef } from './generateRef';
+import { emailNotify } from './emailNotification';
+import paystackService from './paystack';
+import financeLoger from './financialHandler';
 
 export {
     //
+    emailNotify,
     errorRequest,
     logger,
     corsOptions,
@@ -25,5 +29,7 @@ export {
     multipleUpload,
     singleUpload,
     getCreator,
-    generateRef
+    generateRef,
+    paystackService,
+    financeLoger
 };

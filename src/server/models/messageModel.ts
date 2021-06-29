@@ -2,13 +2,19 @@ import { model, Schema } from 'mongoose';
 
 const messageModel = new Schema(
     {
+        // user model ie admin or user
+        onModel: {
+            type: String,
+            required: true,
+            enum: ['User', 'Admin']
+        },
         sender: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            refPath: 'onModel'
         },
         receiver: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            refPath: 'onModel'
         },
         message: {
             type: String,
@@ -16,7 +22,7 @@ const messageModel = new Schema(
         },
         status: {
             type: Number,
-            enum: [0, 1] // 0 - open, 1 - closed
+            enum: ['seen', 'unseen'] // 0 - open, 1 - closed
         }
     },
     {
