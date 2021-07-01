@@ -13,11 +13,12 @@ interface ITransfer {
     amount: number;
     source: string;
     recipient: string;
+    reason: string;
 }
 
 interface IToken {
     transfer_code: string;
-    otp: string;
+    // otp: string;
 }
 
 interface IResolver {
@@ -70,7 +71,7 @@ export default class paystackService {
         }
     }
 
-    static async createTransferRecipiant(data: IRecipiant): Promise<string> {
+    static async createTransferRecipiant(data: IRecipiant): Promise<any> {
         try {
             const response = await axios.post(
                 `${config.paystack.url}/transferrecipient`,
@@ -85,12 +86,14 @@ export default class paystackService {
 
     static async initiateTransfer(data: ITransfer) {
         try {
+            console.log('got here', data);
             const response = await axios.post(
                 `${config.paystack.url}/transfer`,
                 { ...data },
                 options
             );
-            return response;
+            console.log(response);
+            return response.data.transfer_code;
         } catch (e) {
             throw new Error(e);
         }

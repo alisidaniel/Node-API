@@ -10,6 +10,7 @@ export interface IWithdraw {
     reference: string;
     amount: number;
     user: string;
+    account_number: string;
 }
 
 interface withdrawDocument extends IWithdraw, Document {}
@@ -22,11 +23,16 @@ const withdrawModel = new Schema<withdrawDocument>(
         },
         amount: {
             type: Number,
-            require: false
+            require: true
         },
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            require: true
+        },
+        account_number: {
+            type: String,
+            require: true
         },
         status: {
             type: String,
