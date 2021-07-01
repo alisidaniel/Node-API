@@ -7,7 +7,6 @@ import morgan from 'morgan';
 import passport from 'passport';
 import config from './config/config';
 import database from './database/connection';
-import socketio from 'socket.io';
 
 //  ERROR HANDLER MIDDLEWARE
 import errorHandler from './server/middlewares/errorHandler';
@@ -24,6 +23,10 @@ import couponRouter from './server/routes/couponRoute';
 import roleRouter from './server/routes/roleRoute';
 import brandRouter from './server/routes/brandRoute';
 import blogRouter from './server/routes/blogRoute';
+import setttingRouter from './server/routes/settingRoute';
+import cardRouter from './server/routes/cardRoute';
+import bankRouter from './server/routes/bankRoute';
+import walletRouter from './server/routes/walletRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
 import strategy from 'passport-facebook';
@@ -50,8 +53,19 @@ app.use(`${baseRoute}/category`, categoryRouter);
 app.use(`${baseRoute}/product`, productRouter);
 app.use(`${baseRoute}/cart`, cartRouter);
 app.use(`${baseRoute}/order`, orderRouter);
-app.use(errorHandler);
+app.use(`${baseRoute}/dispute`, disputeRouter);
+app.use(`${baseRoute}/coupon`, couponRouter);
+app.use(`${baseRoute}/role`, roleRouter);
+app.use(`${baseRoute}/brand`, brandRouter);
+app.use(`${baseRoute}/blog`, blogRouter);
+app.use(`${baseRoute}/setting`, setttingRouter);
+app.use(`${baseRoute}/bank`, bankRouter);
+app.use(`${baseRoute}/card`, cardRouter);
+app.use(`${baseRoute}/wallet`, walletRouter);
+
 passport.use(`${baseRoute}/auth/facebook`, facebookStrategy);
+
+app.use(errorHandler);
 
 // ERROR LOG HANDLER
 app.use(morgan('combined', { stream: { write: (message) => logger.info(message) } }));

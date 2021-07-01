@@ -1,9 +1,12 @@
 import { model, Schema, Document } from 'mongoose';
 
 export interface ICoupon {
+    userId: string;
     type: string;
     discount: string;
     expiryTime: Date;
+    status: boolean;
+    entries: any;
 }
 
 interface CouponDocument extends ICoupon, Document {}
@@ -12,6 +15,11 @@ const couponModel = new Schema<CouponDocument>(
     {
         code: {
             type: String,
+            required: true
+        },
+        user: {
+            type: [Schema.Types.ObjectId],
+            default: [],
             required: true
         },
         type: {
@@ -31,7 +39,7 @@ const couponModel = new Schema<CouponDocument>(
         },
         status: {
             type: Boolean,
-            default: false
+            default: true
         }
     },
     {

@@ -11,9 +11,9 @@ services:
         ports:
             - 5000:5000
 
-    ngnix:
-        image: nginx:latest
-        ports: 
-            - 80:80
-        volumes: 
-            - ./nginx.conf:/etc/nginx/nginx.conf
+    # ngnix:
+    #     image: nginx:latest
+    #     ports:
+    #         - 80:80
+    #     volumes:
+    #         - ./nginx.conf:/etc/nginx/nginx.conf

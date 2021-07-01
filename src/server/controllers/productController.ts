@@ -64,7 +64,7 @@ export default class ProductController {
             if (!response) return res.status(BAD_REQUEST).json({ message: NOT_FOUND });
             return res.status(SUCCESS).json({ message: DELETED_SUCCESS });
         } catch (e) {
-            next(e);
+            return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
 }
