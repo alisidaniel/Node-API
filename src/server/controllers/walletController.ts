@@ -90,14 +90,16 @@ export default class walletController implements IClass {
                     recipient: recipient_code,
                     reason: 'Wallet withdrawal'
                 };
+
                 const transfer_code = await paystackService.initiateTransfer(initiateData);
 
-                const finializeData = {
-                    transfer_code: transfer_code
-                };
-                const finializeTransfer = await paystackService.finalizeTransfer(finializeData);
+                // NB: Only uncomment when using otp for transfer
+                // const finializeData = {
+                //     transfer_code: transfer_code
+                // };
+                // const finializeTransfer = await paystackService.finalizeTransfer(finializeData);
 
-                if (finializeTransfer.data.status === 'success') {
+                if (transfer_code.data.status === 'success') {
                     const args = {
                         userId: _id,
                         amount: amount,
