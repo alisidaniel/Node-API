@@ -9,7 +9,6 @@ import Setting from '../models/settingsModel';
 import User from '../models/userModel';
 import Coupon, { ICoupon } from '../models/couponModel';
 import { emailNotify } from '../../utils';
-import mongoose from 'mongoose';
 interface IProducts {
     product: string;
     quantity: number;

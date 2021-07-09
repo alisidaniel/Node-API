@@ -12,7 +12,7 @@ router.get('/user/withdrawals', controller.userWithdraws);
 
 router.get('/withdrawals/:withdrawId', controller.singleWithdraw);
 
-router.post('/create/withdraw', controller.makeWithdrawalRequest);
+router.post('/initiate/withdraw', controller.makeWithdrawalRequest);
 
 router.put('/edit/withdraw/:withdrawId', controller.editWithdraw);
 
@@ -20,6 +20,6 @@ router.delete('/delete/withdraw/:withdrawId', controller.deleteWithdraw);
 
 router.post('/topUp', controller.topUp);
 
-router.post('/admin/approve/reject/withdraw/:withdrawId', [isAdmin], controller.disburseOrReject);
+router.post('/approve/reject/withdraw', [isAdmin], controller.disburseOrReject);
 
 export default router;
