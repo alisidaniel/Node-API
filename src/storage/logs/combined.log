@@ -1,0 +1,1 @@
+{"message":"::ffff:172.18.0.1 - - [09/Jul/2021:08:21:58 +0000] \"GET /actuator/health HTTP/1.1\" 404 154 \"-\" \"Mozilla/5.0 zgrab/0.x\"\n","level":"info","service":"error-service"}
