@@ -89,8 +89,7 @@ const userModel = new Schema<UserDocument>(
         gender: {
             type: String,
             enum: Object.values(userType),
-            default: userType.MALE,
-            required: false
+            required: true
         },
         active: {
             type: Boolean,
@@ -120,8 +119,7 @@ const userModel = new Schema<UserDocument>(
         },
         userType: {
             type: String,
-            enum: [0, 1],
-            default: 0,
+            enum: Object.values(EUserType),
             required: true
         },
         walletBalance: {
