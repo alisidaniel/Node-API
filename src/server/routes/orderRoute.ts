@@ -1,5 +1,8 @@
 import express from 'express';
 import orderController from '../controllers/orderController';
+import { isAdmin } from '../middlewares/authMiddleware';
+import { applyCouponValidate } from '../middlewares/couponMiddleware';
+import { validatePayments } from '../middlewares/orderMidlleware';
 
 const router = express.Router();
 
@@ -7,7 +10,7 @@ const controller = new orderController();
 
 router.post('/request', controller.orderRequest);
 
-router.post('/create', controller.order);
+router.post('/create', [applyCouponValidate, validatePayments], controller.order);
 
 router.get('/', controller.getAllQuery);
 
@@ -17,8 +20,8 @@ router.get('/user/orders', controller.getUserOrders);
 
 router.post('/processing/:orderId', controller.processing);
 
-router.post('/approve/:orderId', controller.approve);
+router.post('/approve/:orderId/:userId', controller.approve);
 
-router.post('/reject/:orderId', controller.reject);
+router.post('/reject/:orderId/:userId', controller.reject);
 
 export default router;

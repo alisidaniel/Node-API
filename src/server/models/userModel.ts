@@ -1,13 +1,13 @@
 import { Document, model, Types, Schema } from 'mongoose';
 import { hashPassword } from '../../utils';
 export enum EUserType {
-    Express = 0,
-    Portal = 1
+    Express = 'Express',
+    Portal = 'Express'
 }
 enum EGender {
-    Male = 0,
-    Female = 1,
-    Other = 2
+    Male = 'Male',
+    Female = 'Female',
+    Other = 'Other'
 }
 
 export interface IUser {
@@ -31,10 +31,16 @@ export interface IUser {
     health_description?: Map<string, string>;
 }
 
+enum userType {
+    MALE = 'Male',
+    FEMALE = 'Female'
+}
+
 interface UserDocument extends IUser, Document {
     address: Types.Map<string>;
     health_description: Types.Map<string>;
     fullName: string;
+    findOneOrCreate: any;
 }
 
 const userModel = new Schema<UserDocument>(
@@ -71,7 +77,7 @@ const userModel = new Schema<UserDocument>(
         },
         password: {
             type: String,
-            required: true,
+            required: false,
             min: 6,
             max: 225
         },
@@ -82,8 +88,8 @@ const userModel = new Schema<UserDocument>(
         },
         gender: {
             type: String,
-            enum: [0, 1],
-            default: 0,
+            enum: Object.values(userType),
+            default: userType.MALE,
             required: false
         },
         active: {
@@ -133,6 +139,17 @@ const userModel = new Schema<UserDocument>(
     }
 );
 
+userModel.statics.findOneOrCreate = function findOneOrCreate(condition, doc, callback) {
+    const self = this;
+    self.findOne(condition, (err: any, result: any) => {
+        return result
+            ? callback(err, result)
+            : self.create(doc, (err, result) => {
+                  return callback(err, result);
+              });
+    });
+};
+
 // VIRTUALS *//
 userModel.virtual('fullName').get(function (this: UserDocument) {
     return `${this.firstName || ''} ${this.middleName || ''} ${this.lastName || ''}`;
@@ -140,7 +157,7 @@ userModel.virtual('fullName').get(function (this: UserDocument) {
 
 //* METHODS *//
 userModel.methods.getUserType = function (this: UserDocument) {
-    return this.userType == 0 ? 'Express' : 'Portal';
+    return this.userType == 'Express' ? 'Express' : 'Portal';
 };
 
 //* MIDDLEWARE *//

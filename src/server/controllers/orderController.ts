@@ -1,12 +1,14 @@
 import { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST, SERVER_ERROR, SUCCESS } from '../types/statusCode';
-import paystackService from '../../utils/paystack';
 import orderRequest, { IRequest, EStatus } from '../models/requestModel';
 import Order, { EType, EStatus as IStatus } from '../models/orderModel';
 import { getCreator, getUserFromToken } from '../../utils';
 import Cart from '../models/cartModel';
 import { NOT_FOUND } from '../types/messages';
-
+import Setting from '../models/settingsModel';
+import User from '../models/userModel';
+import Coupon, { ICoupon } from '../models/couponModel';
+import { emailNotify } from '../../utils';
 interface IProducts {
     product: string;
     quantity: number;
@@ -20,6 +22,7 @@ interface IOrder {
     transactionRef: string;
     shipmentAddress: string;
     type: string;
+    couponId: string;
 }
 
 interface IClass {
@@ -36,13 +39,7 @@ interface IClass {
 export default class orderController implements IClass {
     public async order(req: Request, res: Response, next: NextFunction) {
         try {
-            const {
-                products,
-                orderRequestId,
-                transactionRef,
-                shipmentAddress,
-                type
-            }: IOrder = req.body;
+            const { products, orderRequestId, shipmentAddress, type, couponId }: IOrder = req.body;
             const { _id } = await getUserFromToken(req);
             if (type.trim() === '' || !Object.values(EType).includes(type as EType))
                 return res
@@ -53,12 +50,6 @@ export default class orderController implements IClass {
                 return res
                     .status(BAD_REQUEST)
                     .json({ message: 'Field (shipmentAddress) must be provided.' });
-            // verify transaction
-            const response = await paystackService.verifyTransaction(transactionRef);
-            if (!response)
-                return res
-                    .status(BAD_REQUEST)
-                    .json({ message: 'Payment was unsuccessful, please try again.' });
 
             if (type === EType.Cart) {
                 // generate order
@@ -78,39 +69,53 @@ export default class orderController implements IClass {
                 });
                 // Clear user cart
                 await Cart.updateOne({ user: _id }, { $set: { products: [] } });
+                if (couponId.trim() !== '') {
+                    await Coupon.findOne({ _id: couponId }, function (err: any, doc: any) {
+                        let userKey: [any] = [_id];
+                        const newUsers = userKey.concat(doc.user);
+                        doc.user = newUsers;
+                        doc.entries = doc.entries + 1;
+                        doc.save();
+                    });
+                }
                 return res.status(SUCCESS).json({ message: 'Order created successfully' });
             } else if (type === EType.Checkout) {
                 // do something order
-                if (products) {
-                    // check if requestId is valid
-                    const response = await orderRequest.findById(orderRequestId);
-                    if (!response)
-                        return res.status(BAD_REQUEST).json({ message: 'Invalid order(id).' });
+                // check if requestId is valid
+                const response = await orderRequest.findById(orderRequestId);
+                if (!response)
+                    return res.status(BAD_REQUEST).json({ message: 'Invalid order(id).' });
 
-                    products.forEach(async (item: any) => {
-                        await Order.create({
-                            user: req.body.userId,
-                            productName: item.productName,
-                            unitPrice: item.amount,
-                            quantity: item.quantity,
-                            shipmentAddress,
-                            type: EType.Checkout
-                        });
+                response.products.forEach(async (item: any) => {
+                    await Order.create({
+                        user: _id,
+                        productName: item.productName,
+                        unitPrice: item.amount,
+                        quantity: item.quantity,
+                        shipmentAddress,
+                        type: EType.Checkout
                     });
-                    // update request that has been ordered.
-                    await orderRequest.updateOne(
-                        { _id: orderRequestId },
-                        {
-                            $set: {
-                                status: EStatus.Completed
-                            }
+                });
+                // update request that has been ordered.
+                await orderRequest.updateOne(
+                    { _id: orderRequestId },
+                    {
+                        $set: {
+                            status: EStatus.Completed
                         }
-                    );
-                    return res.status(SUCCESS).json({ message: 'Order created successfully' });
+                    }
+                );
+
+                if (couponId.trim() !== '') {
+                    await Coupon.findOne({ _id: couponId }, function (err: any, doc: any) {
+                        let userKey: [any] = [_id];
+                        const newUsers = userKey.concat(doc.user);
+                        doc.user = newUsers;
+                        doc.entries = doc.entries + 1;
+                        doc.save();
+                    });
                 }
-                return res
-                    .status(BAD_REQUEST)
-                    .json({ message: 'Field (products) can not be null.' });
+                return res.status(SUCCESS).json({ message: 'Order created successfully' });
             } else {
                 return res.status(BAD_REQUEST).json({ message: 'Error occured' });
             }
@@ -186,10 +191,20 @@ export default class orderController implements IClass {
 
     public async approve(req: Request, res: Response, next: NextFunction) {
         try {
-            const { orderId } = req.params;
+            const { orderId, userId } = req.params;
             const response = await Order.updateOne(
                 { _id: orderId },
                 { $set: { status: IStatus.Completed } }
+            );
+
+            const user = await User.findOne({ _id: userId });
+            const email = user.email;
+            await emailNotify(
+                'Order Approved',
+                email,
+                userId,
+                'Your order have been approved.',
+                'OrderJob'
             );
             if (response.nModified === 1)
                 return res.status(SUCCESS).json({ message: 'Order approved.' });
@@ -201,6 +216,65 @@ export default class orderController implements IClass {
 
     public async reject(req: Request, res: Response, next: NextFunction) {
         try {
+            const setting = await Setting.find();
+            const { orderId, userId } = req.params;
+            if (setting) {
+                const user = await User.findOne({ _id: userId });
+                const email = user.email;
+                if (!user)
+                    return res.status(BAD_REQUEST).json({ message: 'Please provide a user ref' });
+                if (setting[0].autoRefund) {
+                    // Automatic Refund
+                    // Paystack refund
+                    await emailNotify(
+                        'Order Rejected',
+                        email,
+                        userId,
+                        'Your order have been rejected.',
+                        'OrderJob'
+                    );
+                    const response = await Order.updateOne(
+                        { _id: orderId },
+                        {
+                            $set: {
+                                status: IStatus.Return
+                            }
+                        }
+                    );
+                    if (response.nModified === 1)
+                        return res
+                            .status(SUCCESS)
+                            .json({ message: 'Order rejected fund returned have been disbused.' });
+                    return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+                } else {
+                    // Dispatch email
+                    await emailNotify(
+                        'Order Rejected',
+                        email,
+                        userId,
+                        'Your order have been rejected.',
+                        'OrderJob'
+                    );
+                    // Manual refund
+                    const response = await Order.updateOne(
+                        { _id: orderId },
+                        {
+                            $set: {
+                                status: IStatus.Return
+                            }
+                        }
+                    );
+                    if (response.nModified === 1)
+                        return res
+                            .status(SUCCESS)
+                            .json({ message: 'Order rejected please return fund manually.' });
+                    return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+                }
+            } else {
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Admin settings not found, Create Setting And Try again.' });
+            }
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

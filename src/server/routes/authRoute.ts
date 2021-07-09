@@ -11,6 +11,10 @@ const router = express.Router();
 
 router.post('/login', AuthController.login);
 
+router.get('/facebook', AuthController.facebook);
+
+router.get('/facebook/callback', AuthController.facebookCallBack);
+
 router.post('/register', [userAccountExist, userTypeData], AuthController.register);
 
 router.post('/forgot/password', [userAccountExist], AuthController.sendPasswordResetToken);
