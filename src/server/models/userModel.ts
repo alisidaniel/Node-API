@@ -31,6 +31,11 @@ export interface IUser {
     health_description?: Map<string, string>;
 }
 
+enum userType {
+    MALE = 'Male',
+    FEMALE = 'Female'
+}
+
 interface UserDocument extends IUser, Document {
     address: Types.Map<string>;
     health_description: Types.Map<string>;
@@ -83,8 +88,8 @@ const userModel = new Schema<UserDocument>(
         },
         gender: {
             type: String,
-            enum: [0, 1],
-            default: 0,
+            enum: Object.values(userType),
+            default: userType.MALE,
             required: false
         },
         active: {
