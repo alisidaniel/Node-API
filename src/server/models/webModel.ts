@@ -1,7 +1,6 @@
 import { model, Schema, Document } from 'mongoose';
 
-
-export interface IWeb{
+export interface IWeb {
     heroImage: string;
     missionPhoto: String;
     vissionPhoto: string;
@@ -23,6 +22,10 @@ const webModel = new Schema<WebDocument>(
             type: String,
             required: false
         },
+        banner: {
+            type: [String]
+        },
+
         teamSection: {}
     },
     {

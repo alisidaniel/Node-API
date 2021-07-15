@@ -14,6 +14,7 @@ export interface IAdmin {
     password: string;
     active: boolean;
     photo?: string;
+    available: boolean;
 }
 
 interface AdminDocument extends IAdmin, Document {
@@ -80,6 +81,10 @@ const adminModel = new Schema<AdminDocument>(
             type: String,
             required: false,
             default: null
+        },
+        available: {
+            type: Boolean,
+            default: false
         }
     },
     {
