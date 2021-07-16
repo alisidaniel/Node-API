@@ -18,7 +18,8 @@ interface IPropImages {
 interface IPropImage {
     base64: any;
     id: string;
-    imageType: string;
+    path: string;
+    type: string;
 }
 
 export const multipleUpload = async ({ base64Array, productId }: IPropImages) => {
@@ -79,21 +80,28 @@ export const multipleUpload = async ({ base64Array, productId }: IPropImages) =>
     }
 };
 
-export const singleUpload = async ({ base64, id, imageType }: IPropImage) => {
+export const singleUpload = async ({ base64, id, path, type }: IPropImage) => {
     try {
         const timestamp = new Date().valueOf();
         return new Promise((res, rej) => {
             // new Buffer.from(base64.replace(/^9j/, ''), 'base64')
-            const buf = Buffer.from(base64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
-            const type = fileExtention(base64);
-            if (!requiredExtentions(type)) throw new Error('Image type not supported.');
+            let buf;
+            if (type === 'image') {
+                buf = Buffer.from(base64.replace(/^data:image\/\w+;base64,/, ''), 'base64');
+            }
+            if (type === 'video') {
+                buf = Buffer.from(base64.replace(/^data:video\/\w+;base64,/, ''), 'base64');
+            }
+
+            const Extention = fileExtention(base64);
+            if (!requiredExtentions(Extention)) throw new Error('Image type not supported.');
             const putParams = {
                 Bucket: config.aws.AWS_BUCKET,
-                Key: `${id}/${imageType}/${timestamp}.${type}`,
+                Key: `${id}/${path}/${timestamp}.${Extention}`,
                 Body: buf,
                 ACL: 'public-read',
                 ContentEncoding: 'base64',
-                ContentType: `image/${type}`
+                ContentType: `${type}/${Extention}`
             };
             s3.putObject(putParams, function (err, data) {
                 if (err) {
@@ -102,7 +110,7 @@ export const singleUpload = async ({ base64, id, imageType }: IPropImage) => {
                 } else {
                     console.log('Successfully channel logo');
                     //construct the publicly accessible url and send the url
-                    res(`${config.aws.AWS_HOST}/${id}/${imageType}/${timestamp}.${type}`);
+                    res(`${config.aws.AWS_HOST}/${id}/${path}/${timestamp}.${Extention}`);
                 }
             });
         })

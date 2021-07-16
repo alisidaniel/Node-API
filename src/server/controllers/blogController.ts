@@ -10,6 +10,7 @@ interface IClass {
     getAll(req: Request, res: Response, next: NextFunction): any;
     getSingle(req: Request, res: Response, next: NextFunction): any;
     destory(req: Request, res: Response, next: NextFunction): any;
+    filter(req: Request, res: Response, next: NextFunction): any;
 }
 
 export default class blogController implements IClass {
@@ -21,7 +22,8 @@ export default class blogController implements IClass {
                 const logoUrl = await singleUpload({
                     base64: logo,
                     id: `${new Date().getTime()}`,
-                    imageType: 'blogs'
+                    path: 'blogs',
+                    type: 'image'
                 });
                 const response = await Blog.create({
                     heading,
@@ -49,7 +51,8 @@ export default class blogController implements IClass {
                 const logoUrl = await singleUpload({
                     base64: logo,
                     id: `${new Date().getTime()}`,
-                    imageType: 'blogs'
+                    path: 'blogs',
+                    type: 'image'
                 });
                 const response = await Blog.updateOne(
                     { _id: blogId },
@@ -85,6 +88,16 @@ export default class blogController implements IClass {
     public async getAll(req: Request, res: Response, next: NextFunction) {
         try {
             const response = await Blog.find();
+            return res.status(SUCCESS).json({ response });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async filter(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { tag } = req.query;
+            const response = await Blog.find({ tags: { $elemMatch: { tag } } });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });

@@ -15,15 +15,14 @@
 // export default class webController implements IClass {
 //     public async create(req: Request, res: Response, next: NextFunction) {
 //         try {
-//             const { vissionPhoto, missionPhoto, heroImage }: IWeb = req.body;
-
+//             const { vissionPhoto, missionPhoto, heroImage, banner }: IWeb = req.body;
 //             if (missionPhoto || vissionPhoto || heroImage) {
 //                 const missionUrl = await singleUpload({
 //                     base64: logo,
 //                     id: `${new Date().getTime()}`,
 //                     imageType: 'blogs'
 //                 });
-//                 const response = await Blog.create({
+//                 const response = await WebContent.create({
 //                     heading,
 //                     content,
 //                     logo: logoUrl

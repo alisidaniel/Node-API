@@ -4,7 +4,7 @@ export const fileExtention = (base64: any) => {
 };
 
 export const requiredExtentions = (type: string): Boolean => {
-    const ext = ['png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG'];
+    const ext = ['png', 'PNG', 'jpg', 'JPG', 'jpeg', 'JPEG', 'mp4', 'MP4'];
     if (!ext.includes(type)) return false;
     return true;
 };
