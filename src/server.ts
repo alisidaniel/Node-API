@@ -34,7 +34,7 @@ import webRouter from './server/routes/webRoute';
 import { corsOptions, errorRequest, logger } from './utils';
 import strategy from 'passport-facebook';
 import facebookStrategy from './server/middlewares/facebookStrategy';
-import { ChatEvent } from 'server/types/socket';
+// import { ChatEvent } from 'server/types/socket';
 // import config from './config/config'
 
 const FacebookStrategy = strategy.Strategy;
@@ -81,20 +81,20 @@ app.use(errorRequest);
 const httpServer = http.createServer(app);
 const io = require('socket.io')(httpServer);
 
-io.on('connection', function (socket: any) {
-    console.log('a user connected');
+// io.on('connection', function (socket: any) {
+//     console.log('a user connected');
 
-    socket.on(ChatEvent.CONNECT, () => {
-        console.log('a user connected');
-    });
-    socket.on(ChatEvent.MESSAGE, function (message: any) {
-        console.log(message);
-        io.emit('message', message);
-    });
-    socket.on(ChatEvent.DISCONNECT, function () {
-        console.log('a user disconnected');
-    });
-});
+//     socket.on(ChatEvent.CONNECT, () => {
+//         console.log('a user connected');
+//     });
+//     socket.on(ChatEvent.MESSAGE, function (message: any) {
+//         console.log(message);
+//         io.emit('message', message);
+//     });
+//     socket.on(ChatEvent.DISCONNECT, function () {
+//         console.log('a user disconnected');
+//     });
+// });
 
 database
     .then(function (res: any) {
