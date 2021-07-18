@@ -87,14 +87,26 @@ export default class AuthController<IAuth> {
 
     static async facebook(req: Request, res: Response, next: NextFunction) {
         try {
-            passport.authenticate('facebook', { session: false });
-            async (req: Request, res: Response, next: NextFunction) => {
-                const user = req;
-                res.json({
-                    message: 'Signup with facebook successful',
-                    user
-                });
-            };
+            await passport.authenticate('facebook');
+            return res.status(SUCCESS).json({
+                message:
+                    'Successfully registered with facebook, please proceed to confirm your mail'
+            });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async facebookCallBack(req: Request, res: Response, next: NextFunction) {
+        try {
+            await passport.authenticate('facebook', {
+                successRedirect: '/',
+                failureRedirect: '/facebook/auth/fail'
+            });
+            return res.status(SUCCESS).json({
+                message:
+                    'Successfully registered with facebook, please proceed to confirm your mail'
+            });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

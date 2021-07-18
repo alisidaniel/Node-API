@@ -1,13 +1,13 @@
 import { Document, model, Types, Schema } from 'mongoose';
 import { hashPassword } from '../../utils';
 export enum EUserType {
-    Express = 0,
-    Portal = 1
+    Express = 'Express',
+    Portal = 'Express'
 }
 enum EGender {
-    Male = 0,
-    Female = 1,
-    Other = 2
+    Male = 'Male',
+    Female = 'Female',
+    Other = 'Other'
 }
 
 export interface IUser {
@@ -29,6 +29,11 @@ export interface IUser {
     userType: EUserType;
     walletBalance?: number;
     health_description?: Map<string, string>;
+}
+
+enum userType {
+    MALE = 'Male',
+    FEMALE = 'Female'
 }
 
 interface UserDocument extends IUser, Document {
@@ -72,7 +77,7 @@ const userModel = new Schema<UserDocument>(
         },
         password: {
             type: String,
-            required: true,
+            required: false,
             min: 6,
             max: 225
         },
@@ -83,9 +88,8 @@ const userModel = new Schema<UserDocument>(
         },
         gender: {
             type: String,
-            enum: [0, 1],
-            default: 0,
-            required: false
+            enum: Object.values(userType),
+            required: true
         },
         active: {
             type: Boolean,
@@ -115,8 +119,7 @@ const userModel = new Schema<UserDocument>(
         },
         userType: {
             type: String,
-            enum: [0, 1],
-            default: 0,
+            enum: Object.values(EUserType),
             required: true
         },
         walletBalance: {
@@ -126,16 +129,6 @@ const userModel = new Schema<UserDocument>(
         health_description: {
             type: Map,
             of: String,
-            required: false
-        },
-
-        // Oauths
-        facebookId: {
-            type: String,
-            required: false
-        },
-        googleId: {
-            type: String,
             required: false
         }
     },
@@ -162,7 +155,7 @@ userModel.virtual('fullName').get(function (this: UserDocument) {
 
 //* METHODS *//
 userModel.methods.getUserType = function (this: UserDocument) {
-    return this.userType == 0 ? 'Express' : 'Portal';
+    return this.userType == 'Express' ? 'Express' : 'Portal';
 };
 
 //* MIDDLEWARE *//

@@ -171,9 +171,9 @@ export default class adminController<IAuth> {
         try {
             const { adminId } = req.params;
             const response = await Admin.updateOne({ _id: adminId }, { $set: { ...req.body } });
-            if (response.nModified === 1)
-                return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
-            return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
+            if (response.nModified === 1) 
+                return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
+            return res.status(NOT_FOUND).json({ message: NOT_FOUND_M }); 
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

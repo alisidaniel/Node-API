@@ -17,6 +17,11 @@ export interface IAdmin {
     available: boolean;
 }
 
+enum userType {
+    MALE = 'Male',
+    FEMALE = 'Female'
+}
+
 interface AdminDocument extends IAdmin, Document {
     address: Types.Map<string>;
     fullName: string;
@@ -65,9 +70,9 @@ const adminModel = new Schema<AdminDocument>(
             required: false
         },
         gender: {
-            type: Number,
-            enum: [0, 1],
-            default: 0,
+            type: String,
+            enum: Object.values(userType),
+            default: userType.MALE,
             required: false
         },
         active: {
