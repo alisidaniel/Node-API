@@ -4,6 +4,7 @@ export interface IBlog {
     heading?: string;
     content: string;
     logo?: string;
+    tags?: string;
 }
 
 interface BlogDocument extends IBlog, Document {}
@@ -21,6 +22,9 @@ const blogModel = new Schema<BlogDocument>(
         logo: {
             type: String,
             required: false
+        },
+        tags: {
+            type: [String]
         }
     },
     {

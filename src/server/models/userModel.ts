@@ -20,7 +20,7 @@ export interface IUser {
     username: string;
     password: string;
     gender?: EGender;
-    ePin?: number;
+    ePin: string;
     photo?: string;
     businessType?: string;
     cacDoc?: string;
@@ -96,7 +96,7 @@ const userModel = new Schema<UserDocument>(
             default: false
         },
         ePin: {
-            type: Number,
+            type: String,
             required: false
         },
         photo: {
@@ -163,6 +163,15 @@ userModel.pre<UserDocument>('save', async function (next) {
     if (this.isModified('password')) {
         this.password = await hashPassword(this.password); //import a hasPassword function
     }
+    if (this.isModified('ePin')) {
+        this.ePin = await hashPassword(this.ePin);
+    }
+});
+
+userModel.pre<UserDocument>('updateOne', async function (next) {
+    let self: any = this;
+    let pin = await hashPassword(self._update.$set.ePin);
+    this.set({ ePin: pin });
 });
 
 const User = model('User', userModel);

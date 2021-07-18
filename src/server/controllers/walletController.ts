@@ -1,12 +1,17 @@
 import { Request, Response, NextFunction } from 'express';
 import { BAD_REQUEST, NOT_FOUND, SERVER_ERROR, SUCCESS } from '../types/statusCode';
-import { getUserFromToken, generateRef, paystackService, financeLoger } from '../../utils';
+import {
+    getUserFromToken,
+    generateRef,
+    paystackService,
+    financeLoger,
+    validatePassword
+} from '../../utils';
 import { DELETED_SUCCESS, UPDATE_SUCCESS } from '../types/messages';
 import Withdraw, { IStatus, IWithdraw } from '../models/withdrawModel';
 import User from '../models/userModel';
 import Setting from '../models/settingsModel';
 import Bank from '../models/bankModel';
-import Ledger from '../models/ledgerModel';
 
 interface IClass {
     withrawals: (req: Request, res: Response, next: NextFunction) => any;
@@ -60,6 +65,13 @@ export default class walletController implements IClass {
             const { _id } = await getUserFromToken(req);
             const user = await User.findById(_id);
 
+            // check wallet pin
+            if (req.body.ePin.trim() === '')
+                return res.status(400).json({ message: 'Field(s) ePin can not be empty' });
+
+            const isPinValid = await validatePassword(req.body.ePin, user.ePin);
+            if (!isPinValid) return res.status(400).json({ message: 'User ePin is wrong.' });
+
             // check if admin setting for automatic withdrawal is set to true
             const settings = await Setting.find();
             const withdraw = new Withdraw({ amount, account_number });
@@ -90,14 +102,16 @@ export default class walletController implements IClass {
                     recipient: recipient_code,
                     reason: 'Wallet withdrawal'
                 };
+
                 const transfer_code = await paystackService.initiateTransfer(initiateData);
 
-                const finializeData = {
-                    transfer_code: transfer_code
-                };
-                const finializeTransfer = await paystackService.finalizeTransfer(finializeData);
+                // NB: Only uncomment when using otp for transfer
+                // const finializeData = {
+                //     transfer_code: transfer_code
+                // };
+                // const finializeTransfer = await paystackService.finalizeTransfer(finializeData);
 
-                if (finializeTransfer.data.status === 'success') {
+                if (transfer_code.data.status === 'success') {
                     const args = {
                         userId: _id,
                         amount: amount,

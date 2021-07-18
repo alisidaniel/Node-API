@@ -20,7 +20,8 @@ export default class brandController implements IClass {
             const logoUrl = await singleUpload({
                 base64: logo,
                 id: `${new Date().getTime()}`,
-                imageType: 'brands'
+                path: 'brands',
+                type: 'image'
             });
             console.log(logoUrl);
             const response = await Brand.create({
@@ -42,7 +43,8 @@ export default class brandController implements IClass {
                 const logoUrl = await singleUpload({
                     base64: logo,
                     id: `${new Date().getTime()}`,
-                    imageType: 'brands'
+                    path: 'brands',
+                    type: 'image'
                 });
                 const response = await Brand.updateOne(
                     { _id: brandId },
