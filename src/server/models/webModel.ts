@@ -3,11 +3,19 @@ import { model, Schema, Document } from 'mongoose';
 interface Itrust {
     company: string;
 }
+
+interface Ivideos {
+    heading: String;
+    description: string;
+    url: string;
+}
 interface Inumber {
     number: string;
     subHeading: string;
 }
-interface IblogShowCase {}
+interface IblogShowCase {
+    searchBlog: string;
+}
 interface Itestimonial {
     testimony: string;
     name: string;
@@ -30,6 +38,8 @@ export interface IWeb {
     blogShowCase?: IblogShowCase[];
     testimonial?: Itestimonial[];
     mobileAppSection?: ImobileAppSection;
+    sliderImages?: string[];
+    videos?: Ivideos[];
 }
 
 interface WebDocument extends IWeb, Document {}
@@ -54,6 +64,7 @@ const webModel = new Schema<WebDocument>(
         trustedBy: [
             {
                 company: String,
+                photo: String,
                 default: []
             }
         ],
@@ -68,6 +79,12 @@ const webModel = new Schema<WebDocument>(
             {
                 searchBlog: String,
                 default: []
+            }
+        ],
+        videos: [
+            {
+                heading: String,
+                description: String
             }
         ],
         testimonial: [
@@ -85,8 +102,9 @@ const webModel = new Schema<WebDocument>(
             playStorLink: String,
             appStoreLink: String
         },
-
-        teamSection: {}
+        sliderImages: {
+            type: [String]
+        }
     },
     {
         timestamps: true

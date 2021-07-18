@@ -44,7 +44,6 @@ export default class AuthController<IAuth> {
         try {
             const { password, email, userType, ...rest }: IUser = req.body;
             const user = new User({ email, password, ...rest });
-            console.log(user);
             await user.save();
 
             // Dispatch email

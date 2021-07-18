@@ -11,6 +11,7 @@ import { generateRef } from './generateRef';
 import { emailNotify } from './emailNotification';
 import paystackService from './paystack';
 import financeLoger from './financialHandler';
+import { contentResolver } from './helper';
 
 export {
     //
@@ -31,5 +32,6 @@ export {
     getCreator,
     generateRef,
     paystackService,
-    financeLoger
+    financeLoger,
+    contentResolver
 };
