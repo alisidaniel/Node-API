@@ -2,11 +2,11 @@ import { singleUpload, multipleUpload } from './index';
 import WebContent from '../server/models/webModel';
 
 export const contentResolver = async (key: any, id?: string) => {
-    console.log(Object.keys(key)[0]);
-    switch (key) {
-        case Object.keys(key)[0] == 'vissionPhoto':
+    const value = Object.keys(key)[0];
+    switch (value) {
+        case 'vissionPhoto':
             const vissionPhoto = await singleUpload({
-                base64: key,
+                base64: key.vissionPhoto,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
@@ -16,9 +16,9 @@ export const contentResolver = async (key: any, id?: string) => {
                 { $set: { vissionPhoto: vissionPhoto } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'missionPhoto':
+        case 'missionPhoto':
             const missionPhoto = await singleUpload({
-                base64: key,
+                base64: key.missionPhoto,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
@@ -28,9 +28,9 @@ export const contentResolver = async (key: any, id?: string) => {
                 { $set: { missionPhoto: missionPhoto } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'heroImage':
+        case 'heroImage':
             const heroImage = await singleUpload({
-                base64: key,
+                base64: key.heroImage,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
@@ -40,9 +40,9 @@ export const contentResolver = async (key: any, id?: string) => {
                 { $set: { heroImage: heroImage } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'banners':
+        case 'banners':
             const banners = await singleUpload({
-                base64: key,
+                base64: key.banners,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
@@ -52,9 +52,9 @@ export const contentResolver = async (key: any, id?: string) => {
                 { $push: { banners: banners } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'sliderImages':
+        case 'sliderImages':
             const sliderImages = await singleUpload({
-                base64: key,
+                base64: key.sliderImages,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
@@ -64,70 +64,70 @@ export const contentResolver = async (key: any, id?: string) => {
                 { $push: { sliderImages: sliderImages } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'mobileAppSection':
+        case 'mobileAppSection':
             const image = await singleUpload({
-                base64: key.image,
+                base64: key.mobileAppSection.image,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
             });
             let mobileAppSection = {
                 image,
-                heading: key.heading,
-                subHeading: key.subHeading,
-                playStorLink: key.playStorLink,
-                appStoreLink: key.appStoreLink
+                heading: key.mobileAppSection.heading,
+                subHeading: key.mobileAppSection.subHeading,
+                playStorLink: key.mobileAppSection.playStorLink,
+                appStoreLink: key.mobileAppSection.appStoreLink
             };
             return await WebContent.updateOne(
                 { _id: id },
                 { $set: { mobileAppSection: mobileAppSection } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'testimonial':
+        case 'testimonial':
             let testimonial = {
-                name: key.name,
-                testimony: key.testimony,
-                description: key.description
+                name: key.testimonial.name,
+                testimony: key.testimonial.testimony,
+                description: key.testimonial.description
             };
             return await WebContent.updateOne(
                 { _id: id },
                 { $push: { testimonial: testimonial } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'blogShowCase':
+        case 'blogShowCase':
             return await WebContent.updateOne(
                 { _id: id },
-                { $push: { blogShowCase: key.searchBlog } },
+                { $push: { blogShowCase: key.blogShowCase.searchBlog } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'ourNumbers':
+        case 'ourNumbers':
             console.log('got here in numbers');
             let ourNumbers = {
-                number: key.number,
-                subHeading: key.subHeading
+                number: key.ourNumbers.number,
+                subHeading: key.ourNumbers.subHeading
             };
             return await WebContent.updateOne(
                 { _id: id },
                 { $push: { ourNumbers: ourNumbers } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'trustedBy':
+        case 'trustedBy':
             const photo = await singleUpload({
-                base64: key.photo,
+                base64: key.trustedBy.photo,
                 id: `${new Date().getTime()}`,
                 path: 'content',
                 type: 'image'
             });
             let trustedBy = {
                 photo,
-                company: key.company
+                company: key.trustedBy.company
             };
             return await WebContent.updateOne(
                 { _id: id },
                 { $push: { trustedBy: trustedBy } },
                 { upsert: true }
             );
-        case Object.keys(key)[0] == 'videos':
+        case 'videos':
             const url = await singleUpload({
                 base64: key.url,
                 id: `${new Date().getTime()}`,
@@ -135,8 +135,8 @@ export const contentResolver = async (key: any, id?: string) => {
                 type: 'video'
             });
             let videos = {
-                heading: key.number,
-                description: key.description,
+                heading: key.videos.number,
+                description: key.videos.description,
                 url
             };
             return await WebContent.updateOne(
