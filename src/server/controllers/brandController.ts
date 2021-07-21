@@ -16,7 +16,6 @@ export default class brandController implements IClass {
     public async create(req: Request, res: Response, next: NextFunction) {
         try {
             const { name, logo }: IBrand = req.body;
-            console.log('got here');
             const logoUrl = await singleUpload({
                 base64: logo,
                 id: `${new Date().getTime()}`,

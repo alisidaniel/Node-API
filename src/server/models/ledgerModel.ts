@@ -1,6 +1,6 @@
 import { model, Schema } from 'mongoose';
 
-const transactionEnums = ['001', '002', '003', '004'];
+const transactionEnums = ['001', '002', '003', '004', '005'];
 
 export enum directionType {
     Debit = 'Debit',
