@@ -8,7 +8,7 @@ import { NOT_FOUND } from '../types/messages';
 import Setting from '../models/settingsModel';
 import User from '../models/userModel';
 import Coupon, { ICoupon } from '../models/couponModel';
-import { emailNotify } from '../../utils';
+import { emailNotify, singleUpload } from '../../utils';
 interface IProducts {
     product: string;
     quantity: number;
@@ -126,19 +126,45 @@ export default class orderController implements IClass {
 
     public async orderRequest(req: Request, res: Response, next: NextFunction) {
         try {
-            const { userId, products }: IRequest = req.body;
+            const { userId, products, image }: IRequest = req.body;
             const userType = await getCreator(req);
-            if (products) {
-                if (products.length === 0 || !userId)
+
+            if (userType === 'admin') {
+                if (!products || !userId)
                     return res.status(BAD_REQUEST).json({ message: 'Field(s) can not be null.' });
+
                 const response = await orderRequest.create({
                     user: userId,
                     products,
                     status: userType === 'admin' ? EStatus.Approved : EStatus.Pending
                 });
+
+                const user = await User.findOne({ _id: userId });
+                const email = user.email;
+                await emailNotify(
+                    'Prescription Checkout Order',
+                    email,
+                    userId,
+                    'Hi, Midlman admin have just created a prescription for you. you can know checkout to make an order',
+                    'OrderJob'
+                );
+                return res.status(SUCCESS).json({ response });
+            } else {
+                const imageUri = await singleUpload({
+                    base64: image,
+                    id: `${new Date().getTime()}`,
+                    path: 'prescriptionImage',
+                    type: 'image'
+                });
+
+                const response = await orderRequest.create({
+                    user: userId,
+                    image: imageUri,
+                    status: userType === 'admin' ? EStatus.Approved : EStatus.Pending
+                });
+
                 return res.status(SUCCESS).json({ response });
             }
-            return res.status(BAD_REQUEST).json({ message: 'Field (products) can not be null.' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }
