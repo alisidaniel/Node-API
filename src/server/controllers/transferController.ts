@@ -95,6 +95,13 @@ export default class TransferController implements IClass {
                 };
                 const transactionLogger = await new financeLoger();
                 transactionLogger.transactionLog(args);
+
+                const response = await Transfer.updateOne(
+                    { _id: transferId },
+                    { $set: { status: IStatus.Approved } }
+                );
+                if (response.nModified === 1)
+                    return res.status(SUCCESS).json({ message: 'Approved Successful.' });
             }
             if (IStatus.Rejected === status) {
                 const response = await Transfer.updateOne(
