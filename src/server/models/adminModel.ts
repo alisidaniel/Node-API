@@ -14,6 +14,9 @@ export interface IAdmin {
     password: string;
     active: boolean;
     photo?: string;
+    available: boolean;
+    adminType?: string;
+    superAdmin?: boolean;
 }
 
 enum userType {
@@ -85,6 +88,19 @@ const adminModel = new Schema<AdminDocument>(
             type: String,
             required: false,
             default: null
+        },
+        available: {
+            type: Boolean,
+            default: false
+        },
+        adminType: {
+            type: String,
+            required: false
+        },
+        superAdmin: {
+            type: Boolean,
+            required: true,
+            default: false
         }
     },
     {

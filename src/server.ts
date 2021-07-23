@@ -27,6 +27,10 @@ import setttingRouter from './server/routes/settingRoute';
 import cardRouter from './server/routes/cardRoute';
 import bankRouter from './server/routes/bankRoute';
 import walletRouter from './server/routes/walletRoute';
+import flateRateRouter from './server/routes/flateRateRoute';
+import contactRouter from './server/routes/contactRoute';
+import webRouter from './server/routes/webRoute';
+import transferRouter from './server/routes/transferRoute';
 
 import { corsOptions, errorRequest, logger } from './utils';
 import strategy from 'passport-facebook';
@@ -62,6 +66,10 @@ app.use(`${baseRoute}/setting`, setttingRouter);
 app.use(`${baseRoute}/bank`, bankRouter);
 app.use(`${baseRoute}/card`, cardRouter);
 app.use(`${baseRoute}/wallet`, walletRouter);
+app.use(`${baseRoute}/flatRate`, flateRateRouter);
+app.use(`${baseRoute}/contact`, contactRouter);
+app.use(`${baseRoute}/content`, webRouter);
+app.use(`${baseRoute}/transfer`, transferRouter);
 
 passport.use(`${baseRoute}/auth/facebook`, facebookStrategy);
 

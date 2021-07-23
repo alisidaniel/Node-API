@@ -7,7 +7,11 @@ import {
     getUserFromToken,
     hashPassword,
     userExist,
-    validatePassword
+    validatePassword,
+    signAccessToken,
+    verifyAccessToken,
+    signRefreshToken,
+    verifyRefreshToken
 } from '../../utils';
 import { consumeEmailJob } from '../jobs/email/consumeJob';
 import mailJob from '../jobs/email/emailJob';
@@ -76,8 +80,9 @@ export default class AuthController<IAuth> {
                 const isPasswordValid = await validatePassword(password, user.password);
                 if (!isPasswordValid)
                     return res.status(BAD_REQUEST).json({ message: IN_VALID_LOGIN });
-                const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 }); // expires in 7hours
-                return res.status(SUCCESS).json({ token, user });
+                const token = await signAccessToken(user);
+                const refreshToken = await signRefreshToken(user);
+                return res.status(SUCCESS).json({ token, refreshToken, user });
             }
             return res.status(NOT_FOUND).json({ message: NO_USER });
         } catch (e) {
@@ -211,6 +216,22 @@ export default class AuthController<IAuth> {
             return res.status(NOT_FOUND).json({ message: NO_USER });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e });
+        }
+    }
+
+    static async refreshToken(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { userRefreshToken } = req.body;
+            if (!userRefreshToken)
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Field refreshToken must not be empty.' });
+            const user = await verifyRefreshToken(userRefreshToken);
+            const accessToken = await signAccessToken(user);
+            const refreshToken = await signRefreshToken(user);
+            return res.status(SUCCESS).json({ accessToken, refreshToken });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
 }

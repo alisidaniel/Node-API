@@ -19,7 +19,8 @@ interface IClass {
 const codeMapDescription = [
     { code: '001', message: 'Wallet Topup' },
     { code: '002', message: 'Wallet withdrawal' },
-    { code: '003', message: 'Refund fund' }
+    { code: '003', message: 'Refund fund' },
+    { code: '004', message: 'Admin approve transfer' }
 ];
 
 export default class financeLoger implements IClass {

@@ -6,11 +6,13 @@ const router = express.Router();
 
 const controller = new blogController();
 
-router.get('/', [isAdmin], controller.getAll);
+router.get('/', controller.getAll);
 
 router.post('/create', [isAdmin], controller.create);
 
-router.get('/:blogId', [isAdmin], controller.getSingle);
+router.get('/:blogId', controller.getSingle);
+
+router.get('/filter/:tag', controller.filter);
 
 router.put('/update/:blogId', [isAdmin], controller.edit);
 

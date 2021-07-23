@@ -6,29 +6,23 @@ import { getUserFromToken } from '../../utils';
 export default class UserController {
     static async editProfile(req: Request, res: Response, next: NextFunction) {
         try {
-            const { photo, phone, gender, address, health_description }: IUser = req.body;
+            const { photo, phone, gender, address, health_description, ePin }: IUser = req.body;
             const user = await getUserFromToken(req);
-            await User.findByIdAndUpdate(
-                user._id,
+            await User.updateOne(
+                { _id: user._id },
                 {
                     $set: {
                         photo,
                         phone,
                         gender,
                         address,
-                        health_description
+                        health_description,
+                        ePin
                     }
-                },
-                {
-                    new: true
                 }
-            ).exec((err: any, result: any) => {
-                if (err) {
-                    throw new Error(err);
-                } else {
-                    return res.status(SUCCESS).json({ result });
-                }
-            });
+            );
+            const result = await User.findOne({ _id: user._id });
+            return res.status(SUCCESS).json({ result });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

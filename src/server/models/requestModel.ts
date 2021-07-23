@@ -17,6 +17,7 @@ export interface IRequest {
     userId: string;
     products?: IProducts[];
     creator: string;
+    image?: string;
 }
 
 interface OrderRequest extends IRequest, Document {}
@@ -42,6 +43,9 @@ const requestModel = new Schema<OrderRequest>({
             }
         }
     ],
+    image: {
+        type: String
+    },
     status: {
         type: String,
         enum: Object.values(EStatus),

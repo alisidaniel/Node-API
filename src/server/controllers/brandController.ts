@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from 'express';
 import { singleUpload } from '../../utils';
 import Brand, { IBrand } from '../models/brandModel';
-import { SERVER_ERROR, SUCCESS, NOT_FOUND } from '../types/statusCode';
+import { SERVER_ERROR, SUCCESS, NOT_FOUND, BAD_REQUEST } from '../types/statusCode';
 import { UPDATE_SUCCESS, NOT_FOUND as NOT_FOUND_M, DELETED_SUCCESS } from '../types/messages';
 
 interface IClass {
@@ -15,17 +15,26 @@ interface IClass {
 export default class brandController implements IClass {
     public async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const { name, logo }: IBrand = req.body;
-            console.log('got here');
-            const logoUrl = await singleUpload({
+            const { name, logo, icon, status }: IBrand = req.body;
+            if (!logo || !name || !icon)
+                return res.status(BAD_REQUEST).json({ message: 'Field(s) can be empty' });
+            const imageUri = await singleUpload({
                 base64: logo,
                 id: `${new Date().getTime()}`,
-                imageType: 'brands'
+                path: 'brands',
+                type: 'image'
             });
-            console.log(logoUrl);
+            const iconUri = await singleUpload({
+                base64: icon,
+                id: `${new Date().getTime()}`,
+                path: 'brands',
+                type: 'image'
+            });
             const response = await Brand.create({
                 name,
-                logo: logoUrl
+                logo: imageUri,
+                status,
+                icon: iconUri
             });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
@@ -36,19 +45,32 @@ export default class brandController implements IClass {
     public async edit(req: Request, res: Response, next: NextFunction) {
         try {
             const { brandId } = req.params;
-            const { name, logo }: IBrand = req.body;
+            const { name, logo, icon, status }: IBrand = req.body;
 
             if (logo) {
+                if (!icon || !logo)
+                    return res
+                        .status(BAD_REQUEST)
+                        .json({ message: 'Field(s) logo, icon can not be empty.' });
                 const logoUrl = await singleUpload({
                     base64: logo,
                     id: `${new Date().getTime()}`,
-                    imageType: 'brands'
+                    path: 'brands',
+                    type: 'image'
+                });
+                const iconUrl = await singleUpload({
+                    base64: icon,
+                    id: `${new Date().getTime()}`,
+                    path: 'brands',
+                    type: 'image'
                 });
                 const response = await Brand.updateOne(
                     { _id: brandId },
                     {
                         name,
-                        logo: logoUrl
+                        logo: logoUrl,
+                        status,
+                        icon: iconUrl
                     }
                 );
                 if (response.nModified === 1)
@@ -58,7 +80,8 @@ export default class brandController implements IClass {
                 const response = await Brand.updateOne(
                     { _id: brandId },
                     {
-                        name
+                        name,
+                        status
                     }
                 );
                 if (response.nModified === 1)

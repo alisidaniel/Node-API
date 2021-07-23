@@ -7,6 +7,8 @@ const SERVER_PORT: number = parseInt(<string>process.env.SERVER_PORT, 10) || 500
 const SERVER_HOST_NAME: string = process.env.SERVER_HOST_NAME || 'localhost';
 const MONGO_URL: string = process.env.MONGO_URL!;
 const JWT_SECRET: string = process.env.JWT_SECRET || 'somerandomtextinmidlman';
+const JWT_REFRESH_TOKEN_SECRET =
+    process.env.JWT_REFRESH_TOKEN_SECRET || 'somerandomtextinmidlman123456789';
 const FRONTEND_URL: string = process.env.FRONTEND_URL || 'http://localhost:3000';
 const NODE_ENV: string = process.env.NODE_ENV || 'development';
 const REDIS_PORT: number = parseInt(<string>process.env.REDIS_PORT, 10) || 6379;
@@ -36,7 +38,8 @@ const MONGO = {
 };
 
 const SECRET = {
-    jwt: JWT_SECRET
+    jwt: JWT_SECRET,
+    refresh: JWT_REFRESH_TOKEN_SECRET
     // others ...
 };
 

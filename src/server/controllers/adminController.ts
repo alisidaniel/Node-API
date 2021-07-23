@@ -4,9 +4,11 @@ import { Request, Response, NextFunction } from 'express';
 import mailJob from '../jobs/email/emailJob';
 import { consumeEmailJob } from '../jobs/email/consumeJob';
 import Admin, { IAdmin } from '../models/adminModel';
+import AdminType, { IAdminType } from '../models/adminTypeModel';
 import {
     IN_VALID_LOGIN,
     NO_USER,
+    DELETED_SUCCESS,
     UPDATE_SUCCESS,
     NOT_FOUND as NOT_FOUND_M
 } from '../types/messages';
@@ -23,7 +25,12 @@ import {
     getUserFromToken,
     hashPassword,
     userExist,
-    validatePassword
+    validatePassword,
+    singleUpload,
+    signAccessToken,
+    verifyAccessToken,
+    signRefreshToken,
+    verifyRefreshToken
 } from '../../utils';
 
 interface IAuth<T> {
@@ -41,11 +48,9 @@ interface ILogin {
 export default class adminController<IAuth> {
     static async register(req: Request, res: Response, next: NextFunction) {
         try {
-            console.log('got here ');
             const { password, email, ...rest }: IAdmin = req.body;
             const user = new Admin({ email, password, ...rest });
             await user.save();
-            console.log(user);
 
             // Dispatch email
             const userId = user._id;
@@ -77,8 +82,10 @@ export default class adminController<IAuth> {
                 const isPasswordValid = await validatePassword(password, user.password);
                 if (!isPasswordValid)
                     return res.status(BAD_REQUEST).json({ message: IN_VALID_LOGIN });
-                const token = await jwt.sign({ user }, config.auth.jwt, { expiresIn: 60 * 60 * 7 }); // expires in 7hours
-                return res.status(SUCCESS).json({ token, user });
+
+                const token = await signAccessToken(user);
+                const refreshToken = await signRefreshToken(user);
+                return res.status(SUCCESS).json({ token, refreshToken, user });
             }
             return res.status(NOT_FOUND).json({ message: IN_VALID_LOGIN });
         } catch (e) {
@@ -167,15 +174,133 @@ export default class adminController<IAuth> {
         }
     }
 
+    static async refreshToken(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { userRefreshToken } = req.body;
+            if (!userRefreshToken)
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Field refreshToken must not be empty.' });
+            const user = await verifyRefreshToken(userRefreshToken);
+            const accessToken = await signAccessToken(user);
+            const refreshToken = await signRefreshToken(user);
+            return res.status(SUCCESS).json({ accessToken, refreshToken });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
     static async updateProfile(req: Request, res: Response, next: NextFunction) {
         try {
             const { adminId } = req.params;
             const response = await Admin.updateOne({ _id: adminId }, { $set: { ...req.body } });
-            if (response.nModified === 1) 
+            if (response.nModified === 1)
                 return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
-            return res.status(NOT_FOUND).json({ message: NOT_FOUND_M }); 
+            return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async uploadPhoto(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { adminId } = req.params;
+            const { photo } = req.body;
+            if (!photo)
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Field(s) photo can not be empty.' });
+            const photoUri = await singleUpload({
+                base64: photo,
+                id: `${new Date().getTime()}`,
+                path: 'adminPhoto',
+                type: 'image'
+            });
+            const response = await Admin.updateOne({ _id: adminId }, { $set: { photo: photoUri } });
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async administratorChangeTypes(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { adminType, adminId } = req.body;
+            const response = await Admin.updateOne(
+                { _id: adminId },
+                { $set: { adminType: adminType } }
+            );
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
+            return res.status(BAD_REQUEST).json({ message: 'Unsuccessful' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async adminCreateType(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { name, status }: IAdminType = req.body;
+            const response = await AdminType.create({ name, status });
+            return res.status(SUCCESS).json({ response });
+        } catch (error) {
+            return res.status(SERVER_ERROR).json({ message: error.message });
+        }
+    }
+
+    static async adminQueryAllTypes(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await AdminType.find();
+            return res.status(SUCCESS).json({ response });
+        } catch (error) {
+            return res.status(SERVER_ERROR).json({ message: error.message });
+        }
+    }
+
+    static async adminQuerySingleType(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const response = await AdminType.findOne({ _id: id });
+            return res.status(SUCCESS).json({ response });
+        } catch (error) {
+            return res.status(SERVER_ERROR).json({ message: error.message });
+        }
+    }
+
+    static async adminEditType(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const { name, status }: IAdminType = req.body;
+            const response = await AdminType.updateOne({ _id: id }, { $set: { name, status } });
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
+            return res.status(BAD_REQUEST).json({ message: 'Unsuccessful' });
+        } catch (error) {
+            return res.status(SERVER_ERROR).json({ message: error.message });
+        }
+    }
+
+    static async adminDeleteType(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { id } = req.params;
+            const response = await AdminType.deleteOne({ _id: id });
+            if (response.n === 1) return res.status(SUCCESS).json({ message: DELETED_SUCCESS });
+            return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
+        } catch (error) {
+            return res.status(SERVER_ERROR).json({ message: error.message });
+        }
+    }
+
+    static async superAdminProfileUpdate(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { adminId } = req.body;
+            const response = await Admin.updateOne({ _id: adminId }, { $set: { ...req.body } });
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
+            return res.status(BAD_REQUEST).json({ message: 'Unsuccessful' });
+        } catch (error) {
+            return res.status(SERVER_ERROR).json({ message: error.message });
         }
     }
 }

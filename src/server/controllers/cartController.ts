@@ -82,7 +82,8 @@ export default class cartContoller {
                 const image = await singleUpload({
                     base64: prescription_image,
                     id: productId,
-                    imageType: 'Controlled-products'
+                    path: 'Controlled-products',
+                    type: 'image'
                 });
                 console.log(image);
                 if (isExist) {

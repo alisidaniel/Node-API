@@ -86,14 +86,12 @@ export default class paystackService {
 
     static async initiateTransfer(data: ITransfer) {
         try {
-            console.log('got here', data);
             const response = await axios.post(
                 `${config.paystack.url}/transfer`,
                 { ...data },
                 options
             );
-            console.log(response);
-            return response.data.transfer_code;
+            return response.data;
         } catch (e) {
             throw new Error(e);
         }
