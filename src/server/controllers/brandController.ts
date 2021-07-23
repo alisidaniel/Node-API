@@ -22,7 +22,6 @@ export default class brandController implements IClass {
                 path: 'brands',
                 type: 'image'
             });
-            console.log(logoUrl);
             const response = await Brand.create({
                 name,
                 logo: logoUrl

@@ -23,7 +23,8 @@ import {
     getUserFromToken,
     hashPassword,
     userExist,
-    validatePassword
+    validatePassword,
+    singleUpload
 } from '../../utils';
 
 interface IAuth<T> {
@@ -171,9 +172,31 @@ export default class adminController<IAuth> {
         try {
             const { adminId } = req.params;
             const response = await Admin.updateOne({ _id: adminId }, { $set: { ...req.body } });
-            if (response.nModified === 1) 
+            if (response.nModified === 1)
                 return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
-            return res.status(NOT_FOUND).json({ message: NOT_FOUND_M }); 
+            return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async uploadPhoto(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { adminId } = req.params;
+            const { photo } = req.body;
+            if (!photo)
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Field(s) photo can not be empty.' });
+            const photoUri = await singleUpload({
+                base64: photo,
+                id: `${new Date().getTime()}`,
+                path: 'adminPhoto',
+                type: 'image'
+            });
+            const response = await Admin.updateOne({ _id: adminId }, { $set: { photo: photoUri } });
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

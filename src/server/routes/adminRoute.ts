@@ -15,4 +15,6 @@ router.post('/auth/change/password', [isAuthorized], adminController.changePassw
 
 router.put('/update/:adminId', adminController.updateProfile);
 
+router.put('/upload/photo/:adminId', adminController.uploadPhoto);
+
 export default router;
