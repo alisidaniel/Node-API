@@ -25,4 +25,6 @@ router.post('/change/password', [isAuthorized, isAccountVerified], AuthControlle
 
 router.post('/verify/email/:token', AuthController.verifyEmail);
 
+router.post('/refresh/token', AuthController.refreshToken);
+
 export default router;

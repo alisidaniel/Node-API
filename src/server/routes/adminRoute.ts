@@ -31,4 +31,6 @@ router.put('/superadmin/change/profile', [isSuperAdmin], adminController.superAd
 
 router.delete('/type/delete/:id', [isSuperAdmin], adminController.adminDeleteType);
 
+router.post('/refresh/token', adminController.refreshToken);
+
 export default router;
