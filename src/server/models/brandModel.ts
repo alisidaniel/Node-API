@@ -3,6 +3,8 @@ import { model, Schema, Document } from 'mongoose';
 export interface IBrand {
     name: string;
     logo?: string;
+    icon?: string;
+    status?: boolean;
 }
 
 interface BrandDocument extends IBrand, Document {}
@@ -14,6 +16,9 @@ const brandModel = new Schema<BrandDocument>(
             required: true
         },
         logo: {
+            type: String
+        },
+        icon: {
             type: String
         },
         status: {

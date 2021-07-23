@@ -12,6 +12,12 @@ import { emailNotify } from './emailNotification';
 import paystackService from './paystack';
 import financeLoger from './financialHandler';
 import { contentResolver } from './helper';
+import {
+    signAccessToken,
+    verifyAccessToken,
+    signRefreshToken,
+    verifyRefreshToken
+} from './jwtValidation';
 
 export {
     //
@@ -33,5 +39,9 @@ export {
     generateRef,
     paystackService,
     financeLoger,
-    contentResolver
+    contentResolver,
+    signAccessToken,
+    verifyAccessToken,
+    signRefreshToken,
+    verifyRefreshToken
 };

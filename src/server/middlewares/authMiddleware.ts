@@ -114,3 +114,16 @@ export const isAdmin = async (req: Request, res: Response, next: NextFunction) =
         return res.status(SERVER_ERROR).json({ message: e.message });
     }
 };
+
+export const isSuperAdmin = async (req: Request, res: Response, next: NextFunction) => {
+    try {
+        const { superAdmin } = await getUserFromToken(req);
+        if (!superAdmin)
+            return res
+                .status(UNAUTHORIZED)
+                .json({ message: 'Forbidden access. You must be a superadmin. ' });
+        next();
+    } catch (e) {
+        return res.status(SERVER_ERROR).json({ message: e.message });
+    }
+};
