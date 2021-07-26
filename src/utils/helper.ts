@@ -1,5 +1,6 @@
 import { singleUpload, multipleUpload } from './index';
 import WebContent from '../server/models/webModel';
+import { defaultFilterOptions } from './constant';
 
 export const contentResolver = async (key: any, id?: string) => {
     const value = Object.keys(key)[0];
@@ -148,3 +149,5 @@ export const contentResolver = async (key: any, id?: string) => {
             return {};
     }
 };
+
+export const skipNumber = (page = 1): Number => page * defaultFilterOptions.limit;
