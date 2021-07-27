@@ -24,3 +24,8 @@ export const defaultFilterOptions = {
     limit: 15,
     page: 1
 };
+
+export const sortByMapper = {
+    Latest: 1,
+    Oldest: -1
+};

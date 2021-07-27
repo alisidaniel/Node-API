@@ -2,7 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import Product, { IProduct } from '../models/productModel';
 import { SUCCESS, SERVER_ERROR, BAD_REQUEST } from '../types/statusCode';
 import { DELETED_SUCCESS, UPDATE_SUCCESS, NOT_FOUND } from '../types/messages';
-import { multipleUpload, defaultFilterOptions, skipNumber, IFilters } from '../../utils';
+import {
+    multipleUpload,
+    defaultFilterOptions,
+    skipNumber,
+    IFilters,
+    sortByFormatter,
+    sortBy
+} from '../../utils';
 
 interface IProductId {
     productId: string;
@@ -14,7 +21,8 @@ export default class ProductController {
             const searchText = keyWord || '';
             const response = await Product.find({ $text: { $search: searchText } })
                 .skip(skipNumber(page))
-                .limit(take || defaultFilterOptions.limit);
+                .limit(take || defaultFilterOptions.limit)
+                .sort({ created_at: sortByFormatter(options?.sortBy || sortBy.Latest) });
             // const response
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
@@ -22,7 +30,12 @@ export default class ProductController {
     }
     static async getAllProducts(req: Request, res: Response, next: NextFunction) {
         try {
-            const response = await Product.find();
+            const { page, take, options }: IFilters = req.params;
+            const response = await Product.find()
+                .find()
+                .skip(skipNumber(page))
+                .limit(take || defaultFilterOptions.limit)
+                .sort({ created_at: sortByFormatter(options?.sortBy || sortBy.Latest) });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
