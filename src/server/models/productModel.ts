@@ -115,6 +115,14 @@ const productModel = new Schema<IProduct>(
     }
 );
 
+productModel.index({
+    name: 'text',
+    description: 'text',
+    brand: 'text',
+    category: 'text',
+    subcategory: 'text'
+});
+
 const Product = model('Product', productModel);
 
 export default Product;

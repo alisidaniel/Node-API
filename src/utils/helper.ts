@@ -1,5 +1,6 @@
 import { singleUpload, multipleUpload } from './index';
 import WebContent from '../server/models/webModel';
+import { defaultFilterOptions, sortBy, sortByMapper } from './constant';
 
 export const contentResolver = async (key: any, id?: string) => {
     const value = Object.keys(key)[0];
@@ -148,3 +149,10 @@ export const contentResolver = async (key: any, id?: string) => {
             return {};
     }
 };
+
+export const skipNumber = (page = 1): Number => page * defaultFilterOptions.limit;
+
+export const productsForTheWeek = (id: any) =>
+    Date.now() - id.getTimestamp() < 7 * 24 * 60 * 60 * 1000;
+
+export const sortByFormatter = (sortType: sortBy): number => sortByMapper[sortType];
