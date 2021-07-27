@@ -2,9 +2,14 @@ import { Request, Response, NextFunction } from 'express';
 import Product, { IProduct } from '../models/productModel';
 import { SUCCESS, SERVER_ERROR, BAD_REQUEST } from '../types/statusCode';
 import { DELETED_SUCCESS, UPDATE_SUCCESS, NOT_FOUND } from '../types/messages';
-import { multipleUpload, defaultFilterOptions, skipNumber, IFilters } from '../../utils';
-import { sortByFormatter } from 'utils/helper';
-import { sortBy } from 'utils/constant';
+import {
+    multipleUpload,
+    defaultFilterOptions,
+    skipNumber,
+    IFilters,
+    sortByFormatter,
+    sortBy
+} from '../../utils';
 
 interface IProductId {
     productId: string;

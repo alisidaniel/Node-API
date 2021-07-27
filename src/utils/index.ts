@@ -11,7 +11,7 @@ import { generateRef } from './generateRef';
 import { emailNotify } from './emailNotification';
 import paystackService from './paystack';
 import financeLoger from './financialHandler';
-import { contentResolver, skipNumber } from './helper';
+import { contentResolver, skipNumber, sortByFormatter } from './helper';
 import {
     signAccessToken,
     verifyAccessToken,
@@ -19,9 +19,12 @@ import {
     verifyRefreshToken
 } from './jwtValidation';
 import { defaultFilterOptions, IFilters } from './constant';
+import { sortBy } from './constant';
 
 export {
     //
+    sortBy,
+    sortByFormatter,
     emailNotify,
     errorRequest,
     logger,
