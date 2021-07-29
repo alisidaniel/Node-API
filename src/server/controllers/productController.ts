@@ -1,5 +1,6 @@
 import { Request, Response, NextFunction } from 'express';
 import Product, { IProduct } from '../models/productModel';
+import querystring from 'querystring';
 import { SUCCESS, SERVER_ERROR, BAD_REQUEST } from '../types/statusCode';
 import { DELETED_SUCCESS, UPDATE_SUCCESS, NOT_FOUND } from '../types/messages';
 import {
@@ -11,6 +12,7 @@ import {
     sortBy,
     priceRange
 } from '../../utils';
+import { parsedOptions } from 'utils/helper';
 
 interface IProductId {
     productId: string;
@@ -18,20 +20,20 @@ interface IProductId {
 export default class ProductController {
     static async productSearch(req: Request, res: Response, next: NextFunction) {
         try {
-            const query = req.query;
-            const { page, keyWord, take, options }: IFilters = query;
-            const optionsToUse = JSON.parse(req.query.options);
+            const { page, keyWord, take, options }: IFilters = req.query;
             const searchText = keyWord || '';
             const response = await Product.find({
                 $text: { $search: searchText },
                 unitPrice: {
-                    $gte: priceRange({ from: options?.price?.from }).from,
-                    $lte: priceRange({ to: options?.price?.to }).to
+                    $gte: priceRange({ from: parsedOptions(options)?.price?.from }).from,
+                    $lte: priceRange({ to: parsedOptions(options)?.price?.to }).to
                 }
             })
                 .skip(skipNumber(page))
                 .limit(take || defaultFilterOptions.limit)
-                .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
+                .sort({
+                    createdAt: sortByFormatter(parsedOptions(options)?.sortBy || sortBy.Latest)
+                });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
@@ -43,7 +45,9 @@ export default class ProductController {
             const response = await Product.find()
                 .skip(skipNumber(page))
                 .limit(take || defaultFilterOptions.limit)
-                .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
+                .sort({
+                    createdAt: sortByFormatter(parsedOptions(options)?.sortBy || sortBy.Latest)
+                });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });

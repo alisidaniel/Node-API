@@ -161,3 +161,10 @@ export const productsForTheWeek = (id: any) =>
     Date.now() - id.getTimestamp() < 7 * 24 * 60 * 60 * 1000;
 
 export const sortByFormatter = (sortType: sortBy): number => sortByMapper[sortType];
+
+export const parsedOptions = (options: string | undefined | object) =>
+    options && typeof options === 'string'
+        ? JSON.parse(options)
+        : options && typeof options === 'object'
+        ? options
+        : null;

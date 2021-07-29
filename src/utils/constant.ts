@@ -16,7 +16,7 @@ export interface IFilters {
     page?: number;
     keyWord?: string;
     take?: number;
-    options?: IOptions;
+    options?: string;
 }
 
 export const defaultFilterOptions = {
