@@ -29,7 +29,7 @@ export default class ProductController {
                 }
             })
                 .skip(skipNumber(page))
-                .limit(take || defaultFilterOptions.limit)
+                .limit(!take ? defaultFilterOptions.limit : parseInt(take))
                 .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
@@ -41,7 +41,7 @@ export default class ProductController {
             const { page, take, options }: IFilters = req.query;
             const response = await Product.find()
                 .skip(skipNumber(page))
-                .limit(take || defaultFilterOptions.limit)
+                .limit(!take ? defaultFilterOptions.limit : parseInt(take))
                 .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
             return res.status(SUCCESS).json({ response });
         } catch (e) {

@@ -13,9 +13,9 @@ interface IOptions {
 }
 
 export interface IFilters {
-    page?: number;
+    page?: string;
     keyWord?: string;
-    take?: number;
+    take?: string;
     options?: IOptions;
 }
 
