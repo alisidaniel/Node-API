@@ -120,7 +120,8 @@ productModel.index({
     description: 'text',
     brand: 'text',
     category: 'text',
-    subcategory: 'text'
+    subcategory: 'text',
+    formulation: 'text'
 });
 
 const Product = model('Product', productModel);

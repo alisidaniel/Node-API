@@ -3,11 +3,10 @@ export enum sortBy {
     Oldest = 'Oldest'
 }
 
-interface Iprice {
-    from?: string;
-    to?: string;
+export interface Iprice {
+    from?: number;
+    to?: number;
 }
-
 interface IOptions {
     sortBy?: sortBy;
     price?: Iprice;

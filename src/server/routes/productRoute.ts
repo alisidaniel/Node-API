@@ -9,6 +9,9 @@ router.get('/', ProductController.getAllProducts);
 // GET SINGLE PRODUCT
 router.get('/:productId', ProductController.getSingleProduct);
 
+// PRODUCT SEARCH
+router.get('/search/filter', ProductController.productSearch);
+
 // CREATE SINGLE PRODUCT
 router.post('/create', ProductController.createProduct);
 

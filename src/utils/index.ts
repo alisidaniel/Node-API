@@ -11,7 +11,7 @@ import { generateRef } from './generateRef';
 import { emailNotify } from './emailNotification';
 import paystackService from './paystack';
 import financeLoger from './financialHandler';
-import { contentResolver, skipNumber, sortByFormatter } from './helper';
+import { contentResolver, skipNumber, sortByFormatter, priceRange } from './helper';
 import {
     signAccessToken,
     verifyAccessToken,
@@ -50,5 +50,6 @@ export {
     verifyRefreshToken,
     defaultFilterOptions,
     IFilters,
-    skipNumber
+    skipNumber,
+    priceRange
 };

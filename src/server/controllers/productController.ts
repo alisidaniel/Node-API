@@ -8,7 +8,8 @@ import {
     skipNumber,
     IFilters,
     sortByFormatter,
-    sortBy
+    sortBy,
+    priceRange
 } from '../../utils';
 
 interface IProductId {
@@ -17,25 +18,32 @@ interface IProductId {
 export default class ProductController {
     static async productSearch(req: Request, res: Response, next: NextFunction) {
         try {
-            const { page, keyWord, take, options }: IFilters = req.query;
+            const query = req.query;
+            const { page, keyWord, take, options }: IFilters = query;
+            const optionsToUse = JSON.parse(req.query.options);
             const searchText = keyWord || '';
-            const response = await Product.find({ $text: { $search: searchText } })
+            const response = await Product.find({
+                $text: { $search: searchText },
+                unitPrice: {
+                    $gte: priceRange({ from: options?.price?.from }).from,
+                    $lte: priceRange({ to: options?.price?.to }).to
+                }
+            })
                 .skip(skipNumber(page))
                 .limit(take || defaultFilterOptions.limit)
-                .sort({ created_at: sortByFormatter(options?.sortBy || sortBy.Latest) });
-            // const response
+                .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
+            return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
     static async getAllProducts(req: Request, res: Response, next: NextFunction) {
         try {
-            const { page, take, options }: IFilters = req.params;
+            const { page, take, options }: IFilters = req.query;
             const response = await Product.find()
-                .find()
                 .skip(skipNumber(page))
                 .limit(take || defaultFilterOptions.limit)
-                .sort({ created_at: sortByFormatter(options?.sortBy || sortBy.Latest) });
+                .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
