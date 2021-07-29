@@ -20,7 +20,6 @@ export default class ProductController {
         try {
             const query = req.query;
             const { page, keyWord, take, options }: IFilters = query;
-            const optionsToUse = JSON.parse(req.query.options);
             const searchText = keyWord || '';
             const response = await Product.find({
                 $text: { $search: searchText },
