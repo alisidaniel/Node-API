@@ -2,9 +2,15 @@ import { Request, Response, NextFunction } from 'express';
 import Product, { IProduct } from '../models/productModel';
 import { SUCCESS, SERVER_ERROR, BAD_REQUEST } from '../types/statusCode';
 import { DELETED_SUCCESS, UPDATE_SUCCESS, NOT_FOUND } from '../types/messages';
-import { multipleUpload, defaultFilterOptions, skipNumber, IFilters } from '../../utils';
-import { sortByFormatter } from 'utils/helper';
-import { sortBy } from 'utils/constant';
+import {
+    multipleUpload,
+    defaultFilterOptions,
+    skipNumber,
+    IFilters,
+    sortByFormatter,
+    sortBy,
+    priceRange
+} from '../../utils';
 
 interface IProductId {
     productId: string;
@@ -12,25 +18,31 @@ interface IProductId {
 export default class ProductController {
     static async productSearch(req: Request, res: Response, next: NextFunction) {
         try {
-            const { page, keyWord, take, options }: IFilters = req.query;
+            const query = req.query;
+            const { page, keyWord, take, options }: IFilters = query;
             const searchText = keyWord || '';
-            const response = await Product.find({ $text: { $search: searchText } })
+            const response = await Product.find({
+                $text: { $search: searchText },
+                unitPrice: {
+                    $gte: priceRange({ from: options?.price?.from }).from,
+                    $lte: priceRange({ to: options?.price?.to }).to
+                }
+            })
                 .skip(skipNumber(page))
-                .limit(take || defaultFilterOptions.limit)
-                .sort({ created_at: sortByFormatter(options?.sortBy || sortBy.Latest) });
-            // const response
+                .limit(!take ? defaultFilterOptions.limit : parseInt(take))
+                .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
+            return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }
     }
     static async getAllProducts(req: Request, res: Response, next: NextFunction) {
         try {
-            const { page, take, options }: IFilters = req.params;
+            const { page, take, options }: IFilters = req.query;
             const response = await Product.find()
-                .find()
                 .skip(skipNumber(page))
-                .limit(take || defaultFilterOptions.limit)
-                .sort({ created_at: sortByFormatter(options?.sortBy || sortBy.Latest) });
+                .limit(!take ? defaultFilterOptions.limit : parseInt(take))
+                .sort({ createdAt: sortByFormatter(options?.sortBy || sortBy.Latest) });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
