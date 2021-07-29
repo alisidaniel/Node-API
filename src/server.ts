@@ -81,7 +81,7 @@ app.use(errorRequest);
 
 //* SERVER */
 const httpServer = http.createServer(app);
-const io = require('socket.io')(httpServer);
+// const io = require('socket.io')(httpServer);
 
 // io.on('connection', function (socket: any) {
 //     console.log('a user connected');
