@@ -7,6 +7,7 @@ import morgan from 'morgan';
 import passport from 'passport';
 import config from './config/config';
 import database from './database/connection';
+import { Server, Socket } from 'socket.io';
 
 //  ERROR HANDLER MIDDLEWARE
 import errorHandler from './server/middlewares/errorHandler';
@@ -32,10 +33,11 @@ import contactRouter from './server/routes/contactRoute';
 import webRouter from './server/routes/webRoute';
 import transferRouter from './server/routes/transferRoute';
 
-import { corsOptions, errorRequest, logger } from './utils';
+import { corsOptions, errorRequest, logger, singleUpload } from './utils';
 import strategy from 'passport-facebook';
 import facebookStrategy from './server/middlewares/facebookStrategy';
 import { ChatEvent } from './server/types/socket';
+import Message from './server/models/messageModel';
 
 const FacebookStrategy = strategy.Strategy;
 const app: Application = express();
@@ -80,20 +82,43 @@ app.use(errorRequest);
 
 //* SERVER */
 const httpServer = http.createServer(app);
-const io = require('socket.io')(httpServer);
 
-io.on('connection', function (socket: any) {
-    console.log('a user connected');
+const io = new Server(httpServer, {
+    path: '/my-custom-path/'
+});
+
+io.on('connection', (socket: Socket) => {
+    console.log('wss has been started');
 
     socket.on(ChatEvent.CONNECT, () => {
-        console.log('a user connected');
+        io.emit('message', 'User Connected');
     });
-    socket.on(ChatEvent.MESSAGE, function (message: any) {
-        console.log(message);
-        io.emit('message', message);
+    socket.on(ChatEvent.MESSAGE, async ({ adminId, message, file, userId }) => {
+        if (file) {
+            const imageUri = await singleUpload({
+                base64: file,
+                id: `${new Date().getTime()}`,
+                path: 'chat_support',
+                type: 'image'
+            });
+            const savedMsg = Message.create({
+                admin: adminId,
+                message,
+                file: imageUri,
+                user: userId
+            });
+            io.emit('message', savedMsg);
+        } else {
+            const savedMsg = Message.create({
+                admin: adminId,
+                message,
+                user: userId
+            });
+            io.emit('message', savedMsg);
+        }
     });
-    socket.on(ChatEvent.DISCONNECT, function () {
-        console.log('a user disconnected');
+    socket.on(ChatEvent.DISCONNECT, () => {
+        io.emit('message', 'User Disconnected');
     });
 });
 

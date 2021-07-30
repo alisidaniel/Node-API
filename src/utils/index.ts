@@ -1,28 +1,26 @@
-import errorRequest from './errorRequest';
-import logger from './errorExecptionLogger';
+import { defaultFilterOptions, IFilters, sortBy } from './constant';
 import corsOptions from './corsPermissions';
-import { hashPassword, validatePassword } from './hashPassword';
-import { userExist, adminExist } from './userExist';
-import { getUserFromToken, getUserFromDatabase, getCreator } from './findUser';
 import { createConfirmationUrl } from './createConfirmationUrl';
-import { sendEmail } from './sendMail';
-import { multipleUpload, singleUpload } from './fileUpload';
-import { generateRef } from './generateRef';
 import { emailNotify } from './emailNotification';
-import paystackService from './paystack';
+import logger from './errorExecptionLogger';
+import errorRequest from './errorRequest';
+import { multipleUpload, singleUpload } from './fileUpload';
 import financeLoger from './financialHandler';
-import { contentResolver, skipNumber, sortByFormatter, priceRange, parsedOptions } from './helper';
+import { getCreator, getUserFromDatabase, getUserFromToken } from './findUser';
+import { generateRef } from './generateRef';
+import { hashPassword, validatePassword } from './hashPassword';
+import { contentResolver, parsedOptions, priceRange, skipNumber, sortByFormatter } from './helper';
 import {
     signAccessToken,
-    verifyAccessToken,
     signRefreshToken,
+    verifyAccessToken,
     verifyRefreshToken
 } from './jwtValidation';
-import { defaultFilterOptions, IFilters } from './constant';
-import { sortBy } from './constant';
+import paystackService from './paystack';
+import { sendEmail } from './sendMail';
+import { adminExist, userExist } from './userExist';
 
 export {
-    //
     sortBy,
     sortByFormatter,
     emailNotify,
