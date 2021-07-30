@@ -22,4 +22,6 @@ router.post('/topUp', controller.topUp);
 
 router.post('/approve/reject/withdraw', [isAdmin], controller.disburseOrReject);
 
+router.get('/transaction/ledger', [isAdmin], controller.getLedgerRecords);
+
 export default router;

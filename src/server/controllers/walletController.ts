@@ -12,6 +12,7 @@ import Withdraw, { IStatus, IWithdraw } from '../models/withdrawModel';
 import User from '../models/userModel';
 import Setting from '../models/settingsModel';
 import Bank from '../models/bankModel';
+import Ledger from '../models/ledgerModel';
 
 interface IClass {
     withrawals: (req: Request, res: Response, next: NextFunction) => any;
@@ -22,6 +23,7 @@ interface IClass {
     deleteWithdraw: (req: Request, res: Response, next: NextFunction) => any;
     topUp: (req: Request, res: Response, next: NextFunction) => any;
     disburseOrReject: (req: Request, res: Response, next: NextFunction) => any;
+    getLedgerRecords: (req: Request, res: Response, next: NextFunction) => any;
 }
 
 interface ITopUp {
@@ -260,6 +262,24 @@ export default class walletController implements IClass {
                 return res.status(200).json({ message: 'Successfully rejected withdraw' });
             }
             throw Error('Something went wrong');
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async getLedgerRecords(req: Request, res: Response, next: NextFunction) {
+        try {
+            const response = await Ledger.aggregate([
+                {
+                    $lookup: {
+                        from: 'users',
+                        localField: 'user',
+                        foreignField: '_id',
+                        as: 'user'
+                    }
+                }
+            ]);
+            return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }
