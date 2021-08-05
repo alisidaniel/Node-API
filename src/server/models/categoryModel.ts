@@ -3,6 +3,9 @@ import { model, Schema, Document } from 'mongoose';
 export interface ICategory extends Document {
     name: string;
     subcategory: string[];
+    coverImage: string;
+    icon: string;
+    status: boolean;
 }
 
 const categoryModel = new Schema<ICategory>(
@@ -11,7 +14,17 @@ const categoryModel = new Schema<ICategory>(
             type: String,
             required: true
         },
-        subcategory: [String]
+        subcategory: [String],
+        coverImage: {
+            type: String
+        },
+        icon: {
+            type: String
+        },
+        status: {
+            type: Boolean,
+            default: true
+        }
     },
     {
         timestamps: true

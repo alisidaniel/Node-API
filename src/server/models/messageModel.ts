@@ -1,18 +1,26 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const messageModel = new Schema(
+export interface IMessage {
+    user: string;
+    admin: string;
+    message: string;
+    status?: boolean;
+}
+
+interface MessageDocument extends IMessage, Document {}
+
+const messageModel = new Schema<MessageDocument>(
     {
-        // user model ie admin or user
         onModel: {
             type: String,
             required: true,
             enum: ['User', 'Admin']
         },
-        sender: {
+        admin: {
             type: Schema.Types.ObjectId,
             refPath: 'onModel'
         },
-        receiver: {
+        user: {
             type: Schema.Types.ObjectId,
             refPath: 'onModel'
         },
@@ -20,9 +28,13 @@ const messageModel = new Schema(
             type: String,
             required: true
         },
+        file: {
+            type: String,
+            required: false
+        },
         status: {
-            type: Number,
-            enum: ['seen', 'unseen'] // 0 - open, 1 - closed
+            type: Boolean,
+            default: false
         }
     },
     {

@@ -1,12 +1,5 @@
 import { Request, Response, NextFunction } from 'express';
-import {
-    BAD_REQUEST,
-    FORBIDEN,
-    NOT_FOUND,
-    SERVER_ERROR,
-    SUCCESS,
-    UNAUTHORIZED
-} from '../types/statusCode';
+import { BAD_REQUEST, NOT_FOUND, SERVER_ERROR } from '../types/statusCode';
 import Coupon from '../models/couponModel';
 
 export const couponValidate = async (req: Request, res: Response, next: NextFunction) => {
@@ -39,6 +32,9 @@ export const applyCouponValidate = async (req: Request, res: Response, next: Nex
             const response = await Coupon.findById(couponId);
             if (!response)
                 return res.status(NOT_FOUND).json({ message: 'Coupon ref does not exist.' });
+            // maximum usage check
+            if (response.appliedCount == response.entries)
+                return res.status(BAD_REQUEST).json({ message: 'Exceeded maximum useage limit.' });
             const userUseage = await Coupon.findOne({ user: userId });
             // check if user have used this coupon
             if (userUseage)

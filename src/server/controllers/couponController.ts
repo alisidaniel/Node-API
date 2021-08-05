@@ -29,12 +29,13 @@ export default class couponController implements IClass {
 
     public async create(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-            const { type, discount, expiryTime, userId }: ICoupon = req.body;
+            const { type, discount, entries, expiryTime }: ICoupon = req.body;
             const code = generateRef(15);
             const response = await Coupon.create({
                 code: `midlman${code}`,
                 type,
                 discount,
+                entries,
                 expiryTime
             });
             return res.status(SUCCESS).json({ response });
@@ -44,10 +45,10 @@ export default class couponController implements IClass {
     }
     public async edit(req: Request, res: Response, next: NextFunction): Promise<any> {
         try {
-            const { type, discount, expiryTime, status }: ICoupon = req.body;
+            const { type, discount, expiryTime, entries, status }: ICoupon = req.body;
             const { couponId } = req.params;
             const response = await Coupon.findByIdAndUpdate(couponId, {
-                $set: { type, discount, expiryTime, status }
+                $set: { type, discount, expiryTime, entries, status }
             });
             if (!response) return res.status(NOT_FOUND).json({ message: NOT_FOUND_M });
             return res.status(SUCCESS).json({ message: UPDATE_SUCCESS });
