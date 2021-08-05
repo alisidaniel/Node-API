@@ -8,3 +8,9 @@ export const requiredExtentions = (type: string): Boolean => {
     if (!ext.includes(type)) return false;
     return true;
 };
+
+export const fileUploadType = (base64: any) => {
+    const type = base64.match(/[^:/]\w+(?=;|,)/);
+    if (type) return true;
+    return false;
+};

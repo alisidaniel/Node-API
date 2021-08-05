@@ -1,13 +1,36 @@
 import { Request, Response, NextFunction } from 'express';
 import Category, { ICategory } from '../models/categoryModel';
 import { BAD_REQUEST, SERVER_ERROR, SUCCESS } from '../types/statusCode';
-import { UPDATE_SUCCESS, DELETED_SUCCESS, NOT_FOUND } from '..//types/messages';
+import { UPDATE_SUCCESS, DELETED_SUCCESS, NOT_FOUND } from '../types/messages';
+import { fileUploadType, singleUpload } from '../../utils';
 
 export default class CategoryController {
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
-            const { ...rest }: ICategory = req.body;
-            const response = await Category.create(rest);
+            const { coverImage, icon, status, subcategory, name }: ICategory = req.body;
+            if (!coverImage || !icon)
+                return res
+                    .status(BAD_REQUEST)
+                    .json({ message: 'Field(s) icon, cover_image is required.' });
+            const cover_image = await singleUpload({
+                base64: coverImage,
+                id: `${new Date().getTime()}`,
+                path: 'category',
+                type: 'image'
+            });
+            const icon_image = await singleUpload({
+                base64: icon,
+                id: `${new Date().getTime()}`,
+                path: 'category',
+                type: 'image'
+            });
+            const response = await Category.create({
+                name,
+                subcategory,
+                status,
+                coverImage: cover_image,
+                icon: icon_image
+            });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
@@ -37,7 +60,7 @@ export default class CategoryController {
     static async getById(req: Request, res: Response, next: NextFunction) {
         try {
             const { categoryId } = req.params;
-            const response = await Category.findByIdAndDelete(categoryId);
+            const response = await Category.findById(categoryId);
             if (!response) return res.status(BAD_REQUEST).json({ message: NOT_FOUND });
             return res.status(SUCCESS).json({ response });
         } catch (e) {
