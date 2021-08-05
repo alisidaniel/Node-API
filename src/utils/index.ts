@@ -7,7 +7,7 @@ import { getUserFromToken, getUserFromDatabase, getCreator } from './findUser';
 import { createConfirmationUrl } from './createConfirmationUrl';
 import { sendEmail } from './sendMail';
 import { multipleUpload, singleUpload } from './fileUpload';
-import { fileUploadType } from './fileValidation';
+import { base64FileUpload } from './fileValidation';
 import { generateRef } from './generateRef';
 import { emailNotify } from './emailNotification';
 import paystackService from './paystack';
@@ -40,7 +40,7 @@ export {
     sendEmail,
     multipleUpload,
     singleUpload,
-    fileUploadType,
+    base64FileUpload,
     getCreator,
     generateRef,
     paystackService,

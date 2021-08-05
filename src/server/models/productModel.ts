@@ -16,6 +16,7 @@ export interface IProduct extends Document {
     reviews: { user: string; rate: number; comment: string }[];
     promo: { discount: string; startDate: Date; endDate: Date }[];
     variation: { name: string; variationType: string }[];
+    active: boolean;
 }
 
 const productModel = new Schema<IProduct>(
@@ -108,6 +109,10 @@ const productModel = new Schema<IProduct>(
             // When none verified item will not be shown to public users
             type: Boolean,
             default: false
+        },
+        active: {
+            type: Boolean,
+            default: true
         }
     },
     {

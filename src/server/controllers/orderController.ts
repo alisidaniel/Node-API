@@ -74,7 +74,7 @@ export default class orderController implements IClass {
                         let userKey: [any] = [_id];
                         const newUsers = userKey.concat(doc.user);
                         doc.user = newUsers;
-                        doc.entries = doc.entries + 1;
+                        doc.appliedCount = doc.appliedCount + 1;
                         doc.save();
                     });
                 }
@@ -111,7 +111,7 @@ export default class orderController implements IClass {
                         let userKey: [any] = [_id];
                         const newUsers = userKey.concat(doc.user);
                         doc.user = newUsers;
-                        doc.entries = doc.entries + 1;
+                        doc.appliedCount = doc.appliedCount + 1;
                         doc.save();
                     });
                 }

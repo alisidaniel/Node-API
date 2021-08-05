@@ -9,7 +9,7 @@ export const requiredExtentions = (type: string): Boolean => {
     return true;
 };
 
-export const fileUploadType = (base64: any) => {
+export const base64FileUpload = (base64: any) => {
     const type = base64.match(/[^:/]\w+(?=;|,)/);
     if (type) return true;
     return false;
