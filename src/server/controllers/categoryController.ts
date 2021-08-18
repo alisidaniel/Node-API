@@ -8,10 +8,11 @@ export default class CategoryController {
     static async create(req: Request, res: Response, next: NextFunction) {
         try {
             const { coverImage, icon, status, subcategory, name }: ICategory = req.body;
-            if (!coverImage || !icon)
+            if (coverImage.trim() === '' || icon.trim() === '') {
                 return res
                     .status(BAD_REQUEST)
                     .json({ message: 'Field(s) icon, cover_image is required.' });
+            }
             const cover_image = await singleUpload({
                 base64: coverImage,
                 id: `${new Date().getTime()}`,
