@@ -2,7 +2,6 @@
 import cors from 'cors';
 import express, { Application } from 'express';
 import http from 'http';
-import 'module-alias/register';
 import morgan from 'morgan';
 import passport from 'passport';
 import config from './config/config';

@@ -3,6 +3,7 @@ import { Document, model, Types, Schema } from 'mongoose';
 export enum EStatus {
     Pending = 'Pending',
     Processing = 'Processing',
+    Delivered = 'Delivered',
     Return = 'Return',
     Completed = 'Completed'
 }
@@ -14,6 +15,7 @@ export enum EType {
 
 export interface IOrder {
     user: string;
+    deliveryMan?: string;
     type: EStatus;
 }
 
@@ -29,6 +31,10 @@ const orderModel = new Schema<OrderDocument>(
             type: Schema.Types.ObjectId,
             ref: 'User',
             required: true
+        },
+        deliveryMan: {
+            type: Schema.Types.ObjectId,
+            ref: 'Admin'
         },
         product: {
             type: Schema.Types.ObjectId,

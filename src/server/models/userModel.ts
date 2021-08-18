@@ -69,7 +69,13 @@ const userModel = new Schema<UserDocument>(
             type: String,
             unique: true,
             required: true,
-            lowercase: true
+            lowercase: true,
+            validate: {
+                validator: function (v: any) {
+                    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+                },
+                message: 'Please enter a valid email'
+            }
         },
         phone: {
             type: String,

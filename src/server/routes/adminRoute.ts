@@ -1,9 +1,13 @@
 import express from 'express';
 import adminController from '../controllers/adminController';
+import deliveryManController from '../controllers/deliveryManController';
 import { adminAccountExist, isAuthorized, isSuperAdmin } from '../middlewares/authMiddleware';
+import { isActive } from '../middlewares/userMiddleware';
+
+const deliveryMan = new deliveryManController();
 const router = express.Router();
 
-router.post('/auth/login', adminController.login);
+router.post('/auth/login', [isActive], adminController.login);
 
 router.post('/auth/register', [adminAccountExist], adminController.register);
 
@@ -32,5 +36,19 @@ router.put('/superadmin/change/profile', [isSuperAdmin], adminController.superAd
 router.delete('/type/delete/:id', [isSuperAdmin], adminController.adminDeleteType);
 
 router.post('/refresh/token', adminController.refreshToken);
+
+router.get('/delivery/men', deliveryMan.getAll);
+
+router.get('/delivery/man/:id', deliveryMan.getSingle);
+
+router.post('/add/delivery/man', deliveryMan.create);
+
+router.put('/edit/delivery/man/:id', deliveryMan.edit);
+
+router.delete('/delete/delivery/man/:id', deliveryMan.destory);
+
+router.get('/delivery/list', deliveryMan.deliveryPicker);
+
+router.put('/delivery/man/selector', deliveryMan.assignDeliveryMan);
 
 export default router;

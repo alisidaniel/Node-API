@@ -2,6 +2,10 @@ import { unique } from 'faker';
 import { Document, model, Types, Schema } from 'mongoose';
 import { hashPassword } from '../../utils';
 
+interface Docs {
+    guarrantor: string;
+    verification: string;
+}
 export interface IAdmin {
     firstName: string;
     lastName: string;
@@ -14,9 +18,10 @@ export interface IAdmin {
     password: string;
     active: boolean;
     photo?: string;
-    available: boolean;
     adminType?: string;
     superAdmin?: boolean;
+    deliveryManDocs?: Docs;
+    isDeliveryMan: boolean;
 }
 
 enum userType {
@@ -54,7 +59,13 @@ const adminModel = new Schema<AdminDocument>(
             type: String,
             unique: true,
             required: true,
-            lowercase: true
+            lowercase: true,
+            validate: {
+                validator: function (v: any) {
+                    return /^\w+([\.-]?\w+)*@\w+([\.-]?\w+)*(\.\w{2,3})+$/.test(v);
+                },
+                message: 'Please enter a valid email'
+            }
         },
         phone: {
             type: String,
@@ -89,7 +100,12 @@ const adminModel = new Schema<AdminDocument>(
             required: false,
             default: null
         },
-        available: {
+        deliveryManDocs: {
+            type: Map,
+            of: String,
+            required: false
+        },
+        isDeliveryMan: {
             type: Boolean,
             default: false
         },
@@ -99,7 +115,6 @@ const adminModel = new Schema<AdminDocument>(
         },
         superAdmin: {
             type: Boolean,
-            required: true,
             default: false
         }
     },
