@@ -51,4 +51,6 @@ router.get('/delivery/list', deliveryMan.deliveryPicker);
 
 router.put('/delivery/man/selector', deliveryMan.assignDeliveryMan);
 
+router.get('/delivery/man/orders/:userId', deliveryMan.deliveryManOrders);
+
 export default router;

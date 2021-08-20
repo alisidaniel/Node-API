@@ -187,4 +187,17 @@ export default class deliveryManController implements IClass {
             return res.status(SERVER_ERROR).json({ message: err.message });
         }
     }
+
+    public async deliveryManOrders(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { userId } = req.params;
+            const response = await Order.find({
+                deliveryMan: userId,
+                $or: [{ status: IStatus.Pending }, { status: IStatus.Processing }]
+            });
+            return res.status(SUCCESS).json({ response });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
 }

@@ -22,6 +22,8 @@ router.post('/processing/:orderId', controller.processing);
 
 router.post('/approve/:orderId/:userId', controller.approve);
 
+router.post('/delivered/:orderId/:userId', controller.delivered);
+
 router.post('/reject/:orderId/:userId', controller.reject);
 
 export default router;

@@ -32,6 +32,7 @@ interface IClass {
     order(req: Request, res: Response, next: NextFunction): any;
     orderRequest(req: Request, res: Response, next: NextFunction): any;
     processing(req: Request, res: Response, next: NextFunction): any;
+    delivered(req: Request, res: Response, next: NextFunction): any;
     reject(req: Request, res: Response, next: NextFunction): any;
     approve(req: Request, res: Response, next: NextFunction): any;
 }
@@ -209,6 +210,31 @@ export default class orderController implements IClass {
             );
             if (response.nModified === 1)
                 return res.status(SUCCESS).json({ message: 'Dispatched Order' });
+            return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    public async delivered(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { orderId, userId } = req.params;
+            const response = await Order.updateOne(
+                { _id: orderId },
+                { $set: { status: IStatus.Delivered } }
+            );
+
+            const user = await User.findOne({ _id: userId });
+            const email = user.email;
+            await emailNotify(
+                'Order Delivered',
+                email,
+                userId,
+                'Your order has arrived.',
+                'OrderJob'
+            );
+            if (response.nModified === 1)
+                return res.status(SUCCESS).json({ message: 'Order Delivered.' });
             return res.status(BAD_REQUEST).json({ message: 'Error occured.' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
