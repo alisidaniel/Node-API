@@ -17,6 +17,7 @@ export interface IProduct extends Document {
     promo: { discount: string; startDate: Date; endDate: Date }[];
     variation: { name: string; variationType: string }[];
     active: boolean;
+    rating: number;
 }
 
 const productModel = new Schema<IProduct>(
@@ -98,6 +99,10 @@ const productModel = new Schema<IProduct>(
                 }
             }
         ],
+        rating: {
+            type: Number,
+            default: 0
+        },
         promo: [
             {
                 discount: Number,

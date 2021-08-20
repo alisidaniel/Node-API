@@ -15,6 +15,12 @@ import {
 interface IProductId {
     productId: string;
 }
+
+interface IReview {
+    user: string;
+    rate: number;
+    comment: string;
+}
 export default class ProductController {
     static async productSearch(req: Request, res: Response, next: NextFunction) {
         try {
@@ -95,6 +101,32 @@ export default class ProductController {
             const response = await Product.findByIdAndDelete(productId);
             if (!response) return res.status(BAD_REQUEST).json({ message: NOT_FOUND });
             return res.status(SUCCESS).json({ message: DELETED_SUCCESS });
+        } catch (e) {
+            return res.status(SERVER_ERROR).json({ message: e.message });
+        }
+    }
+
+    static async submitReview(req: Request, res: Response, next: NextFunction) {
+        try {
+            const { user, rate, comment }: IReview = req.body;
+            const { productId } = req.params;
+            const response = await Product.findByIdAndUpdate(
+                productId,
+                {
+                    $push: { reviews: { user, rate, comment } }
+                },
+                { new: true }
+            );
+            let rateSum = 0;
+            let count = 0;
+            response.reviews.forEach((el: any) => {
+                rateSum += el.rate;
+                count++;
+            });
+            let rating = (rateSum / count).toFixed(1);
+            await Product.updateOne({ _id: productId }, { $set: { rating: rating } });
+
+            return res.status(SUCCESS).json({ message: 'Successfully submited review and rating' });
         } catch (e) {
             return res.status(SERVER_ERROR).json({ message: e.message });
         }

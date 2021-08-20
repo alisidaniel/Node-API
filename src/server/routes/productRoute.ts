@@ -21,4 +21,6 @@ router.put('/:productId', ProductController.editSingleProduct);
 // DELETE SINGLE PRODUCT
 router.delete('/:productId', ProductController.deleteSingleProduct);
 
+router.post('/rating/review/:productId', ProductController.submitReview);
+
 export default router;
