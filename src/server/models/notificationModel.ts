@@ -1,18 +1,32 @@
-import { model, Schema } from 'mongoose';
+import { model, Schema, Document } from 'mongoose';
 
-const notificationModel = new Schema(
+export interface INotify {
+    user: string;
+    title: string;
+    body: string;
+    seen: boolean;
+}
+
+interface NotificationDocument extends INotify, Document {}
+
+const notificationModel = new Schema<NotificationDocument>(
     {
         user: {
             type: Schema.Types.ObjectId,
-            ref: 'User'
+            ref: 'User',
+            required: true
         },
-        message: {
+        title: {
             type: String,
             required: true
         },
-        status: {
+        body: {
             type: String,
-            enum: [0, 1] // 0 - open, 1 - closed
+            required: true
+        },
+        seen: {
+            type: Boolean,
+            default: false
         }
     },
     {
