@@ -31,6 +31,7 @@ import flateRateRouter from './server/routes/flateRateRoute';
 import contactRouter from './server/routes/contactRoute';
 import webRouter from './server/routes/webRoute';
 import transferRouter from './server/routes/transferRoute';
+import messageRouter from './server/routes/messageRoute';
 
 import { corsOptions, errorRequest, logger, singleUpload } from './utils';
 import strategy from 'passport-facebook';
@@ -70,6 +71,7 @@ app.use(`${baseRoute}/flatRate`, flateRateRouter);
 app.use(`${baseRoute}/contact`, contactRouter);
 app.use(`${baseRoute}/content`, webRouter);
 app.use(`${baseRoute}/transfer`, transferRouter);
+app.use(`${baseRoute}/socket.io`, messageRouter);
 
 passport.use(`${baseRoute}/auth/facebook`, facebookStrategy);
 
@@ -81,45 +83,6 @@ app.use(errorRequest);
 
 //* SERVER */
 const httpServer = http.createServer(app);
-
-const io = new Server(httpServer, {
-    path: '/my-custom-path/'
-});
-
-io.on('connection', (socket: Socket) => {
-    console.log('wss has been started');
-
-    socket.on(ChatEvent.CONNECT, () => {
-        io.emit('message', 'User Connected');
-    });
-    socket.on(ChatEvent.MESSAGE, async ({ adminId, message, file, userId }) => {
-        if (file) {
-            const imageUri = await singleUpload({
-                base64: file,
-                id: `${new Date().getTime()}`,
-                path: 'chat_support',
-                type: 'image'
-            });
-            const savedMsg = Message.create({
-                admin: adminId,
-                message,
-                file: imageUri,
-                user: userId
-            });
-            io.emit('message', savedMsg);
-        } else {
-            const savedMsg = Message.create({
-                admin: adminId,
-                message,
-                user: userId
-            });
-            io.emit('message', savedMsg);
-        }
-    });
-    socket.on(ChatEvent.DISCONNECT, () => {
-        io.emit('message', 'User Disconnected');
-    });
-});
 
 database
     .then(function (res: any) {
@@ -136,5 +99,53 @@ try {
 } catch (err) {
     console.log(err);
 }
+
+const io = new Server(httpServer, {
+    cors: {
+        origin: '*'
+    }
+});
+
+io.on('connect_failed', function () {
+    console.log('Failed: socket.io');
+});
+
+io.on('Error ', function () {
+    console.log('Error: socket.io');
+});
+
+io.on('connection', (socket: Socket) => {
+    console.log('socket.io server is connected');
+
+    socket.emit('message', 'User 1');
+
+    // socket.on(ChatEvent.MESSAGE, async ({ adminId, message, file, userId }) => {
+    //     if (file) {
+    //         const imageUri = await singleUpload({
+    //             base64: file,
+    //             id: `${new Date().getTime()}`,
+    //             path: 'chat_support',
+    //             type: 'image'
+    //         });
+    //         const savedMsg = Message.create({
+    //             admin: adminId,
+    //             message,
+    //             file: imageUri,
+    //             user: userId
+    //         });
+    //         io.emit('message', savedMsg);
+    //     } else {
+    //         const savedMsg = Message.create({
+    //             admin: adminId,
+    //             message,
+    //             user: userId
+    //         });
+    //         io.emit('message', savedMsg);
+    //     }
+    // });
+    // socket.on(ChatEvent.DISCONNECT, () => {
+    //     io.emit('message', 'User Disconnected');
+    // });
+});
 
 // midlMan@@2021M

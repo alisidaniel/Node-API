@@ -110,7 +110,7 @@ const adminModel = new Schema<AdminDocument>(
             default: false
         },
         adminType: {
-            type: String,
+            type: [String],
             required: false
         },
         superAdmin: {

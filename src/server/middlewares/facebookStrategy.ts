@@ -3,8 +3,6 @@ import config from '../../config/config';
 import { userExist } from '../../utils';
 import { consumeEmailJob } from '../jobs/email/consumeJob';
 import mailJob from '../jobs/email/emailJob';
-import { USER_EXIST } from '../types/messages';
-import { BAD_REQUEST, SUCCESS } from '../types/statusCode';
 import User from './../models/userModel';
 
 const FacebookStrategy = facebookStrategy.Strategy;

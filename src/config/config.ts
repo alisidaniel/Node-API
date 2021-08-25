@@ -26,6 +26,7 @@ const PAYSTACK_SECRET_KEY: string =
     process.env.PAYSTACK_SECRET_KEY || 'sk_test_14c14e0ceb2c7213be160b9a927f49158c58cea7';
 const PAYSTACK_PUBLIC_KEY: string =
     process.env.PAYSTACK_PUBLIC_KEY || 'pk_test_ad8e5e2d5142e9538618a7cb9acf5413b2b02dfc';
+const FIREBASE_DB_URL: string = process.env.FIREBASE_DB_URL || 'https://fir-a7b5d.firebaseio.com';
 
 const SERVER = {
     hostname: SERVER_HOST_NAME,
@@ -73,6 +74,10 @@ const PAYSTACK = {
     public_key: PAYSTACK_PUBLIC_KEY
 };
 
+const FIREBASE = {
+    db: FIREBASE_DB_URL
+};
+
 const config = {
     server: SERVER,
     mongo: MONGO,
@@ -82,7 +87,8 @@ const config = {
     redis: REDIS,
     passport: PASSPORT,
     aws: AWS,
-    paystack: PAYSTACK
+    paystack: PAYSTACK,
+    firebase: FIREBASE
     // others ...
 };
 
