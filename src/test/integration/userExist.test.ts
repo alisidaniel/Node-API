@@ -1,7 +1,7 @@
 import { userExist } from '../../utils/userExist';
 import connection from '../../database/connection';
 import faker from 'faker';
-import User, { IUser } from '../../server/models/userModel';
+import User, { IUser, EUserType } from '../../server/models/userModel';
 
 beforeAll(async () => {
     connection
@@ -26,7 +26,8 @@ describe('User Exist', () => {
                 email: faker.internet.email(),
                 password: faker.internet.password(),
                 phone: faker.phone.phoneNumber(),
-                userType: 0
+                userType: EUserType.Express,
+                ePin: faker.internet.password(8)
             };
             const person = new User(user);
             await person.save();
