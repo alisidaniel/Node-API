@@ -48,7 +48,7 @@
         "firebase-admin": "^9.11.1",
         "jsonwebtoken": "^8.5.1",
         "module-alias": "^2.2.2",
-        "moment": "^2.29.1",
+        "moment": "^2.29.2",
         "mongoose": "^5.12.7",
         "morgan": "^1.10.0",
         "nodemailer": "^6.6.0",
